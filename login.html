@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - Playbox Billing</title>
+    <!-- Font & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Eksternal -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+
+    <div id="login-section">
+        <div class="login-card">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <div class="login-header-icon">
+                    <i class="fas fa-bolt" style="color: #000; font-size: 2rem;"></i>
+                </div>
+                <h2 class="login-title">BOXPLAY Admin</h2>
+                <p class="login-subtitle">Masukkan kredensial untuk akses dashboard.</p>
+            </div>
+            
+            <input type="text" id="username" class="form-input" placeholder="Username (admin)" autofocus>
+            <input type="password" id="password" class="form-input" placeholder="Password (12345)">
+            
+            <button class="btn btn-primary w-full" style="padding: 1.2rem;" onclick="handleLogin()">
+                MASUK KE DASHBOARD
+            </button>
+            <button class="btn btn-outline w-full" style="margin-top: 1rem; border-color: transparent; color: var(--text-muted);" onclick="navigate('home')">
+                Kembali ke Beranda
+            </button>
+        </div>
+    </div>
+
+    <!-- JS Eksternal -->
+    <script src="js/script.js"></script>
+    <script>
+        // Enter key support for login
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+    </script>
+</body>
+</html>
