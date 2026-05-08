@@ -131,6 +131,7 @@ function initHeroSlider() {
 }
 
 let promoSliderIndex = 0;
+let promoInterval;
 
 function setPromoSlide(index) {
     const slides = document.querySelectorAll('.promo-slide');
@@ -142,11 +143,14 @@ function setPromoSlide(index) {
 }
 
 function initPromoSlider() {
+    // Clear interval lama jika ada
+    if (promoInterval) clearInterval(promoInterval);
+    
     const dots = document.querySelectorAll('.promo-slider-dot');
     if (!dots.length) return;
     setPromoSlide(0);
     dots.forEach((dot, idx) => dot.addEventListener('click', () => setPromoSlide(idx)));
-    setInterval(() => setPromoSlide((promoSliderIndex + 1) % dots.length), 5500);
+    promoInterval = setInterval(() => setPromoSlide((promoSliderIndex + 1) % dots.length), 5000);
 }
 
 function initPage() {
@@ -155,10 +159,10 @@ function initPage() {
     if (pageType === 'booking') initBookingPage();
     if (pageType === 'waiting') initWaitingPage();
     if (pageType === 'login') initLoginPage();
-    if (pageType === 'dashboard') initDashboardPage();
+    if (pageType === 'dashboard' || pageType === 'admin') initDashboardPage();
     if (pageType === 'display') initDisplayPage();
-    if (pageType === 'cabang') initCabangPage(); // Tambahkan ini
-    if (pageType === 'portfolio') initPortfolioPage(); // Tambahkan ini
+    if (pageType === 'branch') initCabangPage();
+    if (pageType === 'portfolio') initPortfolioPage();
     if (pageType === 'about') initAboutPage(); // Tambahkan ini
     
     // Compatibility with script.js initialization
@@ -166,12 +170,49 @@ function initPage() {
 }
 
 function initCabangPage() {
-    const units = JSON.parse(localStorage.getItem('pb_units')) || [];
+    initBranchHeroSlider(); // Tambahkan hero slider cabang
+    const units = JSON.parse(localStorage.getItem('pb_units')) || defaultUnits;
     
     renderBranchUnits(units, 'NUD CAFE', 'nud-units-grid');
     renderBranchUnits(units, 'PALIO SPITI', 'palio-units-grid');
     renderBranchUnits(units, 'PIRZY', 'pirzy-units-grid');
     renderBranchUnits(units, 'WAROENG RADEN', 'waroeng-units-grid');
+}
+
+let branchSlideIndex = 0;
+
+function setBranchSlide(index) {
+    const slider = document.getElementById('branch-hero-slider');
+    if (!slider) return;
+    const slides = slider.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('#branch-slider-dots .slider-dot');
+    if (!slides.length || !dots.length) return;
+
+    branchSlideIndex = index % slides.length;
+
+    slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === branchSlideIndex);
+    });
+
+    dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === branchSlideIndex);
+    });
+}
+
+function initBranchHeroSlider() {
+    const slider = document.getElementById('branch-hero-slider');
+    const dots = document.querySelectorAll('#branch-slider-dots .slider-dot');
+    if (!slider || !dots.length) return;
+
+    const slides = slider.querySelectorAll('.hero-slide');
+    slides.forEach((slide) => {
+        const imagePath = slide.dataset.image;
+        if (imagePath) loadHeroImage(slide, imagePath);
+    });
+
+    setBranchSlide(0);
+    dots.forEach((dot, idx) => dot.addEventListener('click', () => setBranchSlide(idx)));
+    setInterval(() => setBranchSlide((branchSlideIndex + 1) % slides.length), 6000);
 }
 
 function initPortfolioPage() {
@@ -366,8 +407,9 @@ function renderHomePromos(promos) {
     }
 
     slider.innerHTML = activePromos.map((promo, idx) => `
-        <div class="promo-slide ${idx === 0 ? 'active' : ''}" style="background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);">
+        <div class="promo-slide ${idx === 0 ? 'active' : ''} ${promo.color || 'promo-1'}" style="background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);">
             <div class="promo-content">
+                <div class="promo-badge"><i class="${promo.icon || 'fas fa-tag'}"></i> ${promo.tag || 'SPECIAL'}</div>
                 <h2>${promo.title}</h2>
                 <p>${promo.desc || promo.description}</p>
                 <button class="btn btn-primary" onclick="navigateTo('booking.html')">Pesan Sekarang</button>
@@ -384,67 +426,18 @@ function renderHomePromos(promos) {
     dots.forEach((dot, idx) => {
         dot.addEventListener('click', () => setPromoSlide(idx));
     });
+
+    // Re-init slider interval dengan jumlah dots baru
+    initPromoSlider();
 }
 
 function initBookingPage() {
     const branchSelect = document.getElementById('booking-branch');
-    const unitSelect = document.getElementById('booking-unit');
-    const unitSelectionSection = document.getElementById('unit-selection-section');
-    const branchSelectionSection = document.getElementById('branch-selection-section');
-    const unitSelectionAltSection = document.getElementById('unit-selection-section-alt');
 
-    // Check if specific unit was selected from home page
-    const selectedUnitData = sessionStorage.getItem('pb_temp_data');
-
-    if (selectedUnitData) {
-        // Hide branch selection, show unit selection
-        branchSelectionSection.style.display = 'none';
-        unitSelectionAltSection.style.display = 'none';
-        unitSelectionSection.style.display = 'block';
-
-        // Parse unit data (format: "Unit 01 (NUD CAFE)")
-        const unitMatch = selectedUnitData.match(/Unit (\d+) \((.+)\)/);
-        if (unitMatch) {
-            const unitNumber = parseInt(unitMatch[1]);
-            const branchName = unitMatch[2];
-
-            // Find the unit in our data
-            const units = JSON.parse(localStorage.getItem('pb_units')) || [];
-            const selectedUnit = units.find(u => u.id === unitNumber && u.branch === branchName);
-
-            if (selectedUnit) {
-                document.getElementById('selected-unit-label').textContent = `${selectedUnit.name} - ${selectedUnit.branch}`;
-
-                // Store unit info for booking
-                sessionStorage.setItem('pb_selected_unit', JSON.stringify(selectedUnit));
-            }
-        }
-    } else {
-        // Show branch and unit selection for general booking
-        unitSelectionSection.style.display = 'none';
-        branchSelectionSection.style.display = 'block';
-        unitSelectionAltSection.style.display = 'block';
-
-        // Populate branch select
-        if (branchSelect) {
-            branchSelect.innerHTML = APP_CONFIG.branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
-        }
-
-        // Populate unit select based on branch
-        if (branchSelect && unitSelect) {
-            branchSelect.addEventListener('change', function() {
-                const selectedBranch = this.value;
-                const units = JSON.parse(localStorage.getItem('pb_units')) || [];
-                const branchUnits = units.filter(u => u.branch === selectedBranch && u.status === 'idle');
-
-                unitSelect.innerHTML = branchUnits.map(unit =>
-                    `<option value="${unit.id}">Unit ${unit.id} - ${unit.name}</option>`
-                ).join('');
-            });
-
-            // Trigger change to populate units for first branch
-            branchSelect.dispatchEvent(new Event('change'));
-        }
+    // Populate branch select
+    if (branchSelect) {
+        branchSelect.innerHTML = '<option value="" disabled selected>Pilih lokasi cabang</option>' + 
+                                 APP_CONFIG.branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
     }
 
     const form = document.getElementById('booking-form');
@@ -455,50 +448,97 @@ function initBookingPage() {
 }
 
 function initWaitingPage() {
-    const booking = sessionStorage.getItem('latestBooking');
-    if (!booking) {
-        document.getElementById('waiting-content').innerHTML = '<p class="section-subtitle">Data antrian tidak ditemukan. Silakan kembali ke beranda dan buat antrian baru.</p>';
-        return;
-    }
+    const latestBooking = JSON.parse(sessionStorage.getItem('latestBooking'));
+    const displayNum = document.getElementById('waiting-number');
+    const displayName = document.getElementById('display-name');
+    const displayBranch = document.getElementById('display-branch');
 
-    const latestBooking = JSON.parse(booking);
-
-    // Check if this is a direct unit booking or queue booking
-    if (latestBooking.unitId && latestBooking.status === 'active') {
-        // Direct unit booking
-        document.querySelector('#waiting-content h2').textContent = 'Unit Berhasil Dipesan!';
-        document.querySelector('#waiting-content .section-subtitle').textContent = 'Unit PlayStation Anda sudah siap digunakan. Selamat bermain!';
-
-        const numberDisplay = document.getElementById('waiting-number');
-        const numberLabel = numberDisplay.previousElementSibling;
-
-        // Change "Nomor Antrian" to "Unit Dipesan"
-        numberLabel.textContent = 'Unit Dipesan';
-        numberDisplay.textContent = latestBooking.unitName;
-        numberDisplay.style.fontSize = '2.5rem'; // Smaller font for unit name
-
-        document.getElementById('display-name').textContent = latestBooking.name;
-        document.getElementById('display-phone').textContent = getDisplayPhone(latestBooking.phone);
-        document.getElementById('display-branch').textContent = latestBooking.branch;
-
-        // Add unit-specific info
-        const infoDiv = document.querySelector('.page-card div[style*="display:grid"]');
-        const unitInfo = document.createElement('div');
-        unitInfo.innerHTML = `<strong>Status:</strong> <span style="color: var(--success);">Aktif - Siap Bermain</span>`;
-        infoDiv.appendChild(unitInfo);
-
+    if (latestBooking) {
+        if (displayNum) displayNum.textContent = String(latestBooking.number).padStart(2, '0');
+        if (displayName) displayName.textContent = latestBooking.name;
+        if (displayBranch) displayBranch.textContent = latestBooking.branch;
     } else {
-        // Queue booking (existing logic)
-        document.getElementById('waiting-number').textContent = String(latestBooking.number).padStart(2, '0');
-        document.getElementById('display-name').textContent = latestBooking.name;
-        document.getElementById('display-phone').textContent = getDisplayPhone(latestBooking.phone);
-        document.getElementById('display-branch').textContent = latestBooking.branch;
+        if (displayName) displayName.textContent = 'Nomor tidak ditemukan';
     }
+
+    // Listener Realtime untuk Panggilan dan List Antrian
+    listenWaitingRealtime();
+}
+
+function listenWaitingRealtime() {
+    const refs = getQueueRefs();
+    
+    // 1. Listen untuk antrian yang sedang dipanggil (playing)
+    refs.items.orderByChild('status').equalTo('playing').limitToLast(1).on('value', (snapshot) => {
+        const callingNum = document.getElementById('active-calling-number');
+        const callingName = document.getElementById('active-calling-name');
+        const callingBranch = document.getElementById('active-calling-branch');
+        const callingCard = document.querySelector('.calling-card');
+
+        if (snapshot.exists()) {
+            const data = Object.values(snapshot.val())[0];
+            if (callingNum) callingNum.textContent = String(data.number).padStart(2, '0');
+            if (callingName) callingName.textContent = data.name;
+            if (callingBranch) callingBranch.textContent = data.branch;
+            
+            // Berikan efek pulsasi saat ada panggilan aktif
+            if (callingCard) callingCard.classList.add('calling-active');
+        } else {
+            if (callingNum) callingNum.textContent = '--';
+            if (callingName) callingName.textContent = 'Menunggu Panggilan...';
+            if (callingBranch) callingBranch.textContent = 'SEMUA CABANG';
+            if (callingCard) callingCard.classList.remove('calling-active');
+        }
+    });
+
+    // 2. Listen untuk daftar antrian waiting
+    refs.items.orderByChild('createdAt').on('value', (snapshot) => {
+        const body = document.getElementById('waiting-list-table-body');
+        if (!body) return;
+
+        const allItems = snapshot.val() ? Object.values(snapshot.val()) : [];
+        const waitingItems = allItems
+            .filter(item => item.status === 'waiting')
+            .sort((a, b) => a.number - b.number);
+
+        if (waitingItems.length === 0) {
+            body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem; color:var(--muted);">Tidak ada antrian menunggu.</td></tr>';
+            return;
+        }
+
+        body.innerHTML = waitingItems.map(item => `
+            <tr>
+                <td><strong>${String(item.number).padStart(2, '0')}</strong></td>
+                <td>${item.name}</td>
+                <td><span class="tag" style="font-size:0.7rem; padding:0.2rem 0.6rem;">${item.branch}</span></td>
+                <td><span class="status-chip status-waiting">Menunggu</span></td>
+            </tr>
+        `).join('');
+    });
 }
 
 function initLoginPage() {
     const form = document.getElementById('login-form');
     if (!form) return;
+    
+    // Toggle Password Visibility
+    const toggleBtn = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('login-password');
+    
+    if (toggleBtn && passwordInput) {
+        toggleBtn.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle icon
+            const icon = toggleBtn.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            }
+        });
+    }
+
     form.addEventListener('submit', (event) => {
         event.preventDefault();
         handleLogin();
@@ -518,6 +558,7 @@ function initDashboardPage() {
     
     listenQueueUpdates();
     listenPromoUpdates(); // Tambahkan listener promo
+    listenCustomerUpdates(); // Tambahkan listener customer
 
     // Inisialisasi form promo
     const promoForm = document.getElementById('add-promo-form');
@@ -525,6 +566,15 @@ function initDashboardPage() {
         promoForm.addEventListener('submit', (e) => {
             e.preventDefault();
             handleAddPromo();
+        });
+    }
+
+    // Inisialisasi form customer
+    const customerForm = document.getElementById('add-customer-form');
+    if (customerForm) {
+        customerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleAddCustomer();
         });
     }
 }
@@ -546,8 +596,21 @@ function renderPromoTable(promos) {
         return;
     }
 
-    // Pastikan promos adalah array
     const promoList = Array.isArray(promos) ? promos : Object.values(promos);
+
+    // Pastikan setiap promo punya ID dan simpan ke Firebase jika ada yang baru
+    let hasNewIds = false;
+    promoList.forEach((promo, idx) => {
+        if (!promo.id) {
+            promo.id = `promo-${Date.now()}-${idx}`;
+            hasNewIds = true;
+        }
+    });
+
+    // Jika ada ID baru, simpan ke Firebase
+    if (hasNewIds && typeof db !== 'undefined') {
+        db.ref('boxplay/promos').set(promoList);
+    }
 
     body.innerHTML = promoList.map((promo, index) => `
         <tr>
@@ -557,54 +620,113 @@ function renderPromoTable(promos) {
             <td>${promo.discount || 0}%</td>
             <td><span class="status-chip ${promo.status === 'active' ? 'status-playing' : 'status-done'}">${promo.status}</span></td>
             <td>
-                <button class="btn btn-secondary" onclick="deletePromo('${promo.id || index}')" style="padding: 0.5rem; color: var(--danger);">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" onclick='openEditPromoModal(${JSON.stringify(promo)})' style="padding: 0.5rem; color: var(--accent);">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-secondary" onclick="deletePromo('${promo.id}')" style="padding: 0.5rem; color: var(--danger);">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </td>
         </tr>
     `).join('');
 }
 
+function openEditPromoModal(promo) {
+    document.getElementById('promo-id-edit').value = promo.id;
+    document.getElementById('promo-title').value = promo.title;
+    document.getElementById('promo-description').value = promo.desc || promo.description;
+    document.getElementById('promo-discount').value = promo.discount || 0;
+    
+    const modalTitle = document.getElementById('promo-modal-title');
+    if (modalTitle) modalTitle.textContent = 'Update Promo';
+    
+    showModal('add-promo-modal');
+}
+
+// Reset modal title when adding new
+window.showAddPromoModal = () => {
+    const promoIdField = document.getElementById('promo-id-edit');
+    const promoForm = document.getElementById('add-promo-form');
+    const modalTitle = document.getElementById('promo-modal-title');
+
+    if (promoIdField) promoIdField.value = '';
+    if (promoForm) promoForm.reset();
+    if (modalTitle) modalTitle.textContent = 'Tambah Promo Baru';
+
+    showModal('add-promo-modal');
+};
+
 async function handleAddPromo() {
+    const editId = document.getElementById('promo-id-edit').value;
     const title = document.getElementById('promo-title').value.trim();
     const desc = document.getElementById('promo-description').value.trim();
     const discount = document.getElementById('promo-discount').value;
-    const status = document.getElementById('promo-status').value;
 
     if (!title || !desc) {
         showToast('Harap isi judul dan deskripsi promo.', 'danger');
         return;
     }
 
-    const newPromo = {
-        id: `promo-${Date.now()}`,
-        tag: discount > 0 ? `${discount}% OFF` : 'SPECIAL',
-        title: title,
-        desc: desc,
-        discount: parseInt(discount),
-        status: status,
-        icon: 'fas fa-tag',
-        color: 'promo-1',
-        createdAt: Date.now()
-    };
-
     try {
-        // Ambil data lama dari Firebase
         const snapshot = await db.ref('boxplay/promos').once('value');
         let currentPromos = snapshot.val() || [];
         if (!Array.isArray(currentPromos)) currentPromos = Object.values(currentPromos);
         
-        currentPromos.push(newPromo);
+        // Pilih icon secara otomatis berdasarkan diskon atau judul
+        let icon = 'fas fa-tag';
+        if (discount >= 50) icon = 'fas fa-fire';
+        else if (discount >= 20) icon = 'fas fa-star';
+        else if (title.toLowerCase().includes('kopi') || title.toLowerCase().includes('cafe')) icon = 'fas fa-coffee';
+        else if (title.toLowerCase().includes('game') || title.toLowerCase().includes('ps')) icon = 'fas fa-gamepad';
+
+        if (editId) {
+            // Update existing
+            const index = currentPromos.findIndex(p => p.id === editId);
+            if (index !== -1) {
+                currentPromos[index] = {
+                    ...currentPromos[index],
+                    title,
+                    desc,
+                    discount: parseInt(discount),
+                    status: 'active', // Default selalu aktif saat diupdate
+                    tag: discount > 0 ? `${discount}% OFF` : 'SPECIAL',
+                    icon: icon,
+                    updatedAt: Date.now()
+                };
+            }
+        } else {
+            // Add new - cek maksimal 10 promo aktif (user mau banyak tapi kita batasi sedikit agar tidak overload)
+            const activeCount = currentPromos.filter(p => p.status === 'active').length;
+            if (activeCount >= 10) {
+                showToast('Maksimal 10 promo aktif diperbolehkan.', 'danger');
+                return;
+            }
+            
+            const newPromo = {
+                id: `promo-${Date.now()}`,
+                tag: discount > 0 ? `${discount}% OFF` : 'SPECIAL',
+                title: title,
+                desc: desc,
+                discount: parseInt(discount),
+                status: 'active',
+                icon: icon,
+                color: `promo-${(currentPromos.length % 3) + 1}`,
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+            };
+            currentPromos.push(newPromo);
+        }
         
-        // Simpan kembali ke Firebase
         await db.ref('boxplay/promos').set(currentPromos);
         
-        showToast('Promo berhasil ditambahkan!');
+        showToast(editId ? 'Promo berhasil diupdate!' : 'Promo berhasil ditambahkan!');
         closeModal('add-promo-modal');
-        document.getElementById('add-promo-form').reset();
+        if (document.getElementById('add-promo-form')) document.getElementById('add-promo-form').reset();
     } catch (error) {
         console.error(error);
-        showToast('Gagal menambahkan promo.', 'danger');
+        showToast('Gagal memproses promo.', 'danger');
     }
 }
 
@@ -616,9 +738,13 @@ async function deletePromo(promoId) {
         let currentPromos = snapshot.val() || [];
         if (!Array.isArray(currentPromos)) currentPromos = Object.values(currentPromos);
         
-        const filteredPromos = currentPromos.filter(p => (p.id || currentPromos.indexOf(p).toString()) !== promoId.toString());
+        const filteredPromos = currentPromos.filter(p => p.id !== promoId);
         
         await db.ref('boxplay/promos').set(filteredPromos);
+        
+        // Update tabel langsung untuk memastikan tampilan segera refresh
+        renderPromoTable(filteredPromos);
+        
         showToast('Promo berhasil dihapus.');
     } catch (error) {
         console.error(error);
@@ -626,23 +752,197 @@ async function deletePromo(promoId) {
     }
 }
 
+async function clearAllPromos() {
+    if (!confirm('Apakah Anda yakin ingin menghapus SEMUA promo? Tindakan ini tidak dapat dibatalkan.')) return;
+
+    try {
+        await db.ref('boxplay/promos').set([]);
+        localStorage.removeItem('pb_promos');
+        
+        // Update tabel langsung
+        renderPromoTable([]);
+        
+        showToast('Semua promo berhasil dihapus.');
+    } catch (error) {
+        console.error(error);
+        showToast('Gagal menghapus semua promo.', 'danger');
+    }
+}
+
+// --- CUSTOMER MANAGEMENT ---
+function listenCustomerUpdates() {
+    db.ref('boxplay/customers').on('value', (snapshot) => {
+        const customers = snapshot.val() || [];
+        renderCustomerTable(customers);
+    });
+}
+
+function renderCustomerTable(customers) {
+    const body = document.getElementById('customer-table-body');
+    if (!body) return;
+
+    const customerList = Array.isArray(customers) ? customers : Object.values(customers);
+
+    if (customerList.length === 0) {
+        body.innerHTML = '<tr><td colspan="6" style="padding:2rem; text-align:center; color:var(--muted);">Belum ada data customer.</td></tr>';
+        return;
+    }
+
+    body.innerHTML = customerList.map((customer, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td><strong>${customer.name}</strong></td>
+            <td>${customer.email || '-'}</td>
+            <td>${customer.phone}</td>
+            <td>${customer.address || '-'}</td>
+            <td>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" onclick='openEditCustomerModal(${JSON.stringify(customer)})' style="padding: 0.5rem; color: var(--accent);">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-secondary" onclick="deleteCustomer('${customer.id}')" style="padding: 0.5rem; color: var(--danger);">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+async function handleAddCustomer() {
+    const name = document.getElementById('customer-name').value.trim();
+    const email = document.getElementById('customer-email').value.trim();
+    const phone = document.getElementById('customer-phone').value.trim();
+    const address = document.getElementById('customer-address').value.trim();
+
+    if (!name || !phone) {
+        showToast('Nama dan No HP wajib diisi.', 'danger');
+        return;
+    }
+
+    try {
+        const snapshot = await db.ref('boxplay/customers').once('value');
+        let currentCustomers = snapshot.val() || [];
+        if (!Array.isArray(currentCustomers)) currentCustomers = Object.values(currentCustomers);
+        
+        const customerId = `cust-${Date.now()}`;
+        const newCustomer = {
+            id: customerId,
+            name,
+            email,
+            phone,
+            address,
+            createdAt: Date.now()
+        };
+        
+        currentCustomers.push(newCustomer);
+        await db.ref('boxplay/customers').set(currentCustomers);
+        
+        showToast('Data customer berhasil disimpan!');
+        closeModal('add-customer-modal');
+        document.getElementById('add-customer-form').reset();
+    } catch (error) {
+        console.error(error);
+        showToast('Gagal menyimpan data customer.', 'danger');
+    }
+}
+
+async function deleteCustomer(customerId) {
+    if (!confirm('Apakah Anda yakin ingin menghapus data customer ini?')) return;
+
+    try {
+        const snapshot = await db.ref('boxplay/customers').once('value');
+        let currentCustomers = snapshot.val() || [];
+        if (!Array.isArray(currentCustomers)) currentCustomers = Object.values(currentCustomers);
+        
+        const filteredCustomers = currentCustomers.filter(c => c.id !== customerId);
+        await db.ref('boxplay/customers').set(filteredCustomers);
+        
+        showToast('Data customer berhasil dihapus.');
+    } catch (error) {
+        console.error(error);
+        showToast('Gagal menghapus data customer.', 'danger');
+    }
+}
+
+function openEditCustomerModal(customer) {
+    // Untuk saat ini kita hanya implementasi tambah dan hapus, 
+    // jika ingin edit bisa ditambahkan form hidden ID seperti promo
+    showToast('Fitur edit customer akan segera hadir.', 'info');
+}
+
 function initDisplayPage() {
-    const currentText = document.getElementById('display-current-number');
-    const currentStatus = document.getElementById('display-status');
-    const currentNote = document.getElementById('display-note');
+    listenDisplayRealtime();
+}
+
+function listenDisplayRealtime() {
     const refs = getQueueRefs();
-    refs.meta.on('value', (snapshot) => {
-        const value = snapshot.val();
-        if (!value || !value.currentNumber) {
-            currentText.textContent = '--';
-            currentStatus.textContent = 'Menunggu panggilan';
-            currentNote.textContent = 'Silakan bersiap, nomor akan muncul otomatis.';
+
+    // 1. Listen untuk antrian yang sedang dipanggil (panggilan utama)
+    refs.items.orderByChild('status').equalTo('playing').limitToLast(1).on('value', (snapshot) => {
+        const callingNum = document.getElementById('display-current-number');
+        const callingName = document.getElementById('display-current-name');
+        const callingBranch = document.getElementById('display-current-branch');
+        const callingCard = document.querySelector('.calling-card');
+
+        if (snapshot.exists()) {
+            const data = Object.values(snapshot.val())[0];
+            const prevNum = callingNum ? callingNum.textContent : '--';
+            const newNum = String(data.number).padStart(2, '0');
+
+            if (callingNum) callingNum.textContent = newNum;
+            if (callingName) callingName.textContent = data.name;
+            if (callingBranch) callingBranch.textContent = data.branch;
+
+            // Trigger suara panggilan jika nomor berubah
+            if (prevNum !== newNum && prevNum !== '--') {
+                playCallSound(data.number);
+            }
+
+            if (callingCard) callingCard.classList.add('calling-active');
+        } else {
+            if (callingNum) callingNum.textContent = '--';
+            if (callingName) callingName.textContent = 'Menunggu...';
+            if (callingBranch) callingBranch.textContent = 'SEMUA CABANG';
+            if (callingCard) callingCard.classList.remove('calling-active');
+        }
+    });
+
+    // 2. Listen untuk daftar antrian waiting
+    refs.items.orderByChild('createdAt').on('value', (snapshot) => {
+        const body = document.getElementById('display-waiting-list');
+        if (!body) return;
+
+        const allItems = snapshot.val() ? Object.values(snapshot.val()) : [];
+        const waitingItems = allItems
+            .filter(item => item.status === 'waiting')
+            .sort((a, b) => a.number - b.number)
+            .slice(0, 8); // Ambil 8 antrian pertama saja agar tidak kepanjangan
+
+        if (waitingItems.length === 0) {
+            body.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:2rem; color:var(--muted);">Tidak ada antrian menunggu.</td></tr>';
             return;
         }
-        currentText.textContent = String(value.currentNumber).padStart(2, '0');
-        currentStatus.textContent = 'Sedang dipanggil';
-        currentNote.textContent = 'Mohon segera menuju kasir atau area layanan.';
+
+        body.innerHTML = waitingItems.map(item => `
+            <tr>
+                <td style="font-size:1.5rem; font-weight:800; color:var(--accent);">${String(item.number).padStart(2, '0')}</td>
+                <td style="font-weight:600;">${item.name}</td>
+                <td><span class="tag" style="font-size:0.8rem;">${item.branch}</span></td>
+            </tr>
+        `).join('');
     });
+}
+
+function playCallSound(number) {
+    // Implementasi TTS (Text to Speech) sederhana
+    if ('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance();
+        msg.text = `Nomor antrian ${number}, silakan menuju kasir.`;
+        msg.lang = 'id-ID';
+        msg.rate = 0.9;
+        window.speechSynthesis.speak(msg);
+    }
 }
 
 async function processBooking() {
@@ -664,102 +964,40 @@ async function processBooking() {
         return;
     }
 
-    // Check if specific unit booking
-    const selectedUnitData = sessionStorage.getItem('pb_selected_unit');
-    if (selectedUnitData) {
-        // Unit-specific booking
-        const selectedUnit = JSON.parse(selectedUnitData);
+    // General queue booking
+    const branchInput = document.getElementById('booking-branch');
+    const branch = branchInput ? branchInput.value : '';
 
-        try {
-            // Check if unit is still available
-            const units = JSON.parse(localStorage.getItem('pb_units')) || [];
-            const currentUnit = units.find(u => u.id === selectedUnit.id);
+    if (!branch) {
+        showToast('Pilih cabang terlebih dahulu.', 'danger');
+        if (branchInput) branchInput.focus();
+        return;
+    }
 
-            if (!currentUnit || currentUnit.status !== 'idle') {
-                showToast('Unit sudah dipesan orang lain. Silakan pilih unit lain.', 'danger');
-                return;
-            }
+    try {
+        const refs = getQueueRefs();
+        const queueNumber = await reserveQueueNumber();
 
-            // Book the unit
-            const bookingId = `booking-${Date.now()}`;
-            const bookingData = {
-                id: bookingId,
-                unitId: selectedUnit.id,
-                name,
-                phone: phone.replace(/\D/g, ''),
-                branch: selectedUnit.branch,
-                unitName: selectedUnit.name,
-                status: 'active',
-                startTime: Date.now(),
-                createdAt: Date.now()
-            };
+        const bookingId = `q-${Date.now()}`;
+        const bookingData = {
+            id: bookingId,
+            name,
+            phone: phone.replace(/\D/g, ''),
+            branch,
+            number: queueNumber,
+            status: 'waiting',
+            createdAt: Date.now()
+        };
 
-            // Update unit status
-            currentUnit.status = 'active';
-            currentUnit.customer = name;
-            currentUnit.startTime = Date.now();
-            currentUnit.elapsed = 0;
+        await refs.items.child(bookingId).set(bookingData);
+        sessionStorage.setItem('latestBooking', JSON.stringify(bookingData));
 
-            // Save to localStorage
-            localStorage.setItem('pb_units', JSON.stringify(units));
+        showToast(`Nomor antrian berhasil dibuat: ${String(queueNumber).padStart(2, '0')}`);
+        setTimeout(() => navigateTo('waiting.html'), 900);
 
-            // Save booking to active orders
-            const activeOrders = JSON.parse(localStorage.getItem('pb_active_orders')) || [];
-            activeOrders.push(bookingData);
-            localStorage.setItem('pb_active_orders', JSON.stringify(activeOrders));
-
-            // Store booking info for waiting page
-            sessionStorage.setItem('latestBooking', JSON.stringify({
-                ...bookingData,
-                number: selectedUnit.id // Use unit ID as queue number
-            }));
-
-            showToast(`Unit ${selectedUnit.name} berhasil dipesan!`, 'success');
-            setTimeout(() => navigateTo('waiting.html'), 900);
-
-        } catch (error) {
-            console.error('Unit booking error:', error);
-            showToast('Terjadi kesalahan saat booking unit. Coba lagi.', 'danger');
-        }
-    } else {
-        // General queue booking
-        const branchInput = document.getElementById('booking-branch');
-        const unitInput = document.getElementById('booking-unit');
-        const branch = branchInput ? branchInput.value : '';
-        const unitId = unitInput ? unitInput.value : '';
-
-        if (!branch) {
-            showToast('Pilih cabang terlebih dahulu.', 'danger');
-            if (branchInput) branchInput.focus();
-            return;
-        }
-
-        try {
-            const refs = getQueueRefs();
-            const queueNumber = await reserveQueueNumber();
-
-            const bookingId = `q-${Date.now()}`;
-            const bookingData = {
-                id: bookingId,
-                name,
-                phone: phone.replace(/\D/g, ''),
-                branch,
-                unitId: unitId ? parseInt(unitId) : null,
-                number: queueNumber,
-                status: 'waiting',
-                createdAt: Date.now()
-            };
-
-            await refs.items.child(bookingId).set(bookingData);
-            sessionStorage.setItem('latestBooking', JSON.stringify(bookingData));
-
-            showToast(`Nomor antrian berhasil dibuat: ${String(queueNumber).padStart(2, '0')}`);
-            setTimeout(() => navigateTo('waiting.html'), 900);
-
-        } catch (error) {
-            console.error(error);
-            showToast('Terjadi kesalahan saat membuat antrian. Coba lagi.', 'danger');
-        }
+    } catch (error) {
+        console.error(error);
+        showToast('Terjadi kesalahan saat membuat antrian. Coba lagi.', 'danger');
     }
 }
 
@@ -880,7 +1118,7 @@ function handleLogin() {
     const password = document.getElementById('login-password').value.trim();
     if (username === APP_CONFIG.admin.username && password === APP_CONFIG.admin.password) {
         sessionStorage.setItem('boxplay_admin', 'true');
-        navigateTo('dashboard.html');
+        navigateTo('admin.html');
     } else {
         showToast('Username atau password tidak benar.', 'danger');
     }
@@ -906,6 +1144,28 @@ function toggleMenu() {
             document.removeEventListener('click', closeMenuOnClickOutside);
         }
     }
+}
+
+function toggleDropdown(event) {
+    event.preventDefault();
+    const dropdown = event.currentTarget.closest('.dropdown');
+    const menu = dropdown.querySelector('.dropdown-menu');
+    
+    // Close other dropdowns
+    document.querySelectorAll('.dropdown-menu.active').forEach(m => {
+        if (m !== menu) m.classList.remove('active');
+    });
+    
+    menu.classList.toggle('active');
+    
+    // Close on click outside
+    const closeDropdown = (e) => {
+        if (!dropdown.contains(e.target)) {
+            menu.classList.remove('active');
+            document.removeEventListener('click', closeDropdown);
+        }
+    };
+    document.addEventListener('click', closeDropdown);
 }
 
 function closeMenuOnClickOutside(event) {
@@ -935,8 +1195,10 @@ function scrollToSection(id) {
 }
 
 window.showAddCustomerModal = () => showModal('add-customer-modal');
-window.showAddPromoModal = () => showModal('add-promo-modal');
-window.deletePromo = deletePromo; // Ekspos fungsi delete ke global
+window.showAddPromoModal = window.showAddPromoModal; // Pastikan menggunakan fungsi yang sudah di-update
+window.openEditPromoModal = openEditPromoModal; // Ekspos fungsi edit ke global
+window.deletePromo = deletePromo;
+window.clearAllPromos = clearAllPromos;
 window.closeModal = closeModal;
 window.scrollToSection = scrollToSection;
 

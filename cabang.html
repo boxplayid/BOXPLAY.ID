@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cabang Kami - Boxplayid</title>
+    <title>Cabang - Boxplayid</title>
     <link rel="icon" type="image/jpeg" href="foto_boxplay/icon_aplikasi.jpeg">
-    <meta name="theme-color" content="#090b10">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body data-page="cabang">
+<body data-page="branch">
     <div class="header">
         <div class="container navbar">
             <a class="brand" href="beranda.html">
@@ -19,7 +18,7 @@
             </a>
             <nav class="navbar-center">
                 <a class="nav-link" href="beranda.html">
-                    <i class="fas fa-home"></i> <span>Home</span>
+                    <i class="fas fa-home"></i> <span>Beranda</span>
                 </a>
                 <a class="nav-link" href="waiting.html">
                     <i class="fas fa-list"></i> <span>Antrian</span>
@@ -30,6 +29,7 @@
                 <a class="nav-link" href="portofolio.html">
                     <i class="fas fa-images"></i> <span>Portofolio</span>
                 </a>
+                
                 <a class="nav-link" href="tentang.html">
                     <i class="fas fa-info-circle"></i> <span>Tentang Kami</span>
                 </a>
@@ -80,42 +80,78 @@
     </div>
 
     <main class="container">
-        <!-- Branch Hero Section -->
+        <!-- Hero Slider Cabang -->
+        <section class="hero-slider-section">
+            <div class="hero-slider" id="branch-hero-slider">
+                <div class="hero-slide active" data-image="foto_cabang/nud.jpeg">
+                    <div class="slide-overlay">
+                        <h2>NUD CAFE</h2>
+                        <p>Nikmati suasana gaming premium dengan kopi terbaik.</p>
+                    </div>
+                </div>
+                <div class="hero-slide" data-image="foto_cabang/palio_spiti.jpeg">
+                    <div class="slide-overlay">
+                        <h2>PALIO SPITI</h2>
+                        <p>Lokasi strategis untuk mabar seru bersama teman.</p>
+                    </div>
+                </div>
+                <div class="hero-slide" data-image="foto_cabang/pirzy.jpeg">
+                    <div class="slide-overlay">
+                        <h2>PIRZY</h2>
+                        <p>Fasilitas gaming lengkap dengan menu kekinian.</p>
+                    </div>
+                </div>
+                <div class="hero-slide" data-image="foto_cabang/waroeng_raden.jpeg">
+                    <div class="slide-overlay">
+                        <h2>WAROENG RADEN</h2>
+                        <p>Tempat nongkrong asik dengan sentuhan tradisional.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-dots" id="branch-slider-dots">
+                <button class="slider-dot active"></button>
+                <button class="slider-dot"></button>
+                <button class="slider-dot"></button>
+                <button class="slider-dot"></button>
+            </div>
+        </section>
+
+        <!-- Branch Section -->
         <section class="about-hero">
             <div class="about-hero-content">
                 <h1>Cabang Kami</h1>
-                <p>Boxplay X NUD hadir di lokasi strategis untuk gamer, komunitas, dan pelanggan cafe di Padang.</p>
+                <p>Boxplay X Cabang hadir di lokasi strategis untuk gamer, komunitas, dan pelanggan cafe di Padang.</p>
             </div>
         </section>
 
         <!-- Branch Section -->
         <section class="about-section">
             <div class="features-grid">
-                <div class="feature-item">
+                <div class="feature-item" onclick="scrollToSection('nud-units')" style="cursor: pointer;">
                     <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
                     <h4>NUD Cafe</h4>
                     <p>Jl. Purus IV No. 5, Padang, Sumatera Barat. Lokasi utama dengan fasilitas gaming lengkap.</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-item" onclick="scrollToSection('palio-units')" style="cursor: pointer;">
                     <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
                     <h4>PALIO SPITI</h4>
-                    <p>Cabang strategis di area pusat kota dengan konsep modern dan suasana nyaman.</p>
+                    <p>Jati Baru, Padang Timur, Kota Padang.</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-item" onclick="scrollToSection('pirzy-units')" style="cursor: pointer;">
                     <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
                     <h4>PIRZY</h4>
-                    <p>Lokasi premium dengan fasilitas gaming terdepan dan menu spesial.</p>
+                    <p>Jl. Baru Andalas, Kota Padang 17c.</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-item" onclick="scrollToSection('waroeng-units')" style="cursor: pointer;">
                     <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
                     <h4>WAROENG RADEN</h4>
-                    <p>Cabang tradisional dengan sentuhan modern, cocok untuk nongkrong bersama teman.</p>
+                    <p>Jl. Jaksa Agung R. Soeprapto No. 7, Rimbo Kaluang, Kec. Padang Barat, Kota Padang, Sumatera Barat.</p>
                 </div>
             </div>
         </section>
 
         <!-- NUD Cafe Units -->
-        <section class="section">
+        <section class="section" id="nud-units">
             <div class="section-title">Unit NUD Cafe</div>
             <p class="section-subtitle">5 Unit PlayStation 4 tersedia di lokasi utama kami.</p>
             <div class="grid product-grid" id="nud-units-grid">
@@ -124,7 +160,7 @@
         </section>
 
         <!-- PALIO SPITI Units -->
-        <section class="section">
+        <section class="section" id="palio-units">
             <div class="section-title">Unit PALIO SPITI</div>
             <p class="section-subtitle">3 Unit PlayStation 4 tersedia di cabang pusat kota.</p>
             <div class="grid product-grid" id="palio-units-grid">
@@ -133,7 +169,7 @@
         </section>
 
         <!-- PIRZY Units -->
-        <section class="section">
+        <section class="section" id="pirzy-units">
             <div class="section-title">Unit PIRZY</div>
             <p class="section-subtitle">3 Unit PlayStation 4 tersedia di lokasi premium.</p>
             <div class="grid product-grid" id="pirzy-units-grid">
@@ -142,7 +178,7 @@
         </section>
 
         <!-- WAROENG RADEN Units -->
-        <section class="section">
+        <section class="section" id="waroeng-units">
             <div class="section-title">Unit WAROENG RADEN</div>
             <p class="section-subtitle">3 Unit PlayStation 4 tersedia di cabang tradisional.</p>
             <div class="grid product-grid" id="waroeng-units-grid">
@@ -154,7 +190,7 @@
     <footer class="container">
         <div class="footer-row">
             <div class="footer-card">
-                <h4>Boxplay X NUD</h4>
+                <h4>Boxplay X Cabang</h4>
                 <p>Solusi manajemen rental PlayStation modern nomor satu di Indonesia. Profesional, akurat, dan sangat mudah digunakan.</p>
             </div>
             <div class="footer-card">

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Boxplay X NUD</title>
+    <link rel="icon" type="image/jpeg" href="foto_boxplay/icon_aplikasi.jpeg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -12,8 +13,8 @@
     <div class="header">
         <div class="container navbar">
             <a class="brand" href="beranda.html">
-                <span class="brand-icon"><i class="fas fa-bolt"></i></span>
-                <span class="brand-name">BOXPLAY X NUD</span>
+                <span class="brand-icon"><img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
+                <span class="brand-name">BOXPLAYID</span>
             </a>
             <div class="nav-actions">
                 <button class="btn btn-secondary" onclick="navigateTo('beranda.html')">Beranda</button>
@@ -58,13 +59,18 @@
                 <form id="login-form">
                     <div class="form-group">
                         <label for="login-username">Username</label>
-                        <input id="login-username" class="form-input" type="text" placeholder="admin" required>
+                        <input id="login-username" class="form-input" type="text" placeholder="Masukkan username admin" required>
                     </div>
                     <div class="form-group">
                         <label for="login-password">Password</label>
-                        <input id="login-password" class="form-input" type="password" placeholder="12345" required>
+                        <div style="position: relative;">
+                            <input id="login-password" class="form-input" type="password" placeholder="Masukkan password" required style="padding-right: 3.5rem;">
+                            <button type="button" id="toggle-password" style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.05); border: none; color: var(--muted); cursor: pointer; width: 2.5rem; height: 2.5rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.3s ease;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Masuk</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Masuk ke Panel Admin</button>
                 </form>
                 <button class="btn btn-secondary" style="margin-top:1rem; width:100%;" onclick="navigateTo('beranda.html')">Kembali ke Beranda</button>
             </div>

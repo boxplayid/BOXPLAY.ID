@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buat Antrian - Boxplay X NUD</title>
+    <title>Buat Antrian - Boxplayid</title>
+    <link rel="icon" type="image/jpeg" href="foto_boxplay/icon_aplikasi.jpeg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -12,8 +13,8 @@
     <div class="header">
         <div class="container navbar">
             <a class="brand" href="beranda.html">
-                <span class="brand-icon"><i class="fas fa-bolt"></i></span>
-                <span class="brand-name">BOXPLAY X NUD</span>
+                <span class="brand-icon"><img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
+                <span class="brand-name">BOXPLAYID</span>
             </a>
             <div class="nav-actions">
                 <button class="btn btn-secondary" onclick="navigateTo('beranda.html')">Beranda</button>
@@ -50,23 +51,37 @@
     <main class="container">
         <section class="section">
             <div class="form-card card">
-                <div class="dashboard-header">
-                    <div>
-                        <p class="tag">Form Antrian</p>
-                        <h2>Pesan Nomor Antrian Sekarang</h2>
-                        <p class="section-subtitle">Isi nama dan nomor WhatsApp, sistem akan memproses nomor antrian otomatis.</p>
-                    </div>
+                <div class="section-header">
+                    <h2>Buat Antrian Baru</h2>
+                    <p class="section-subtitle">Silakan isi formulir di bawah untuk mendapatkan nomor antrian Anda.</p>
                 </div>
+
+                <!-- Panduan Penggunaan Sistem Antrian -->
+                <div class="note-box" style="margin-bottom: 2.5rem;">
+                    <h4 style="color: var(--accent); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-info-circle"></i> Cara Penggunaan Sistem Antrian:
+                    </h4>
+                    <ul style="list-style: none; padding: 0; display: grid; gap: 0.8rem; font-size: 0.9rem; color: var(--muted);">
+                        <li style="display: flex; gap: 0.75rem;">
+                            <span style="background: var(--accent-soft); color: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; flex-shrink: 0;">1</span>
+                            <span>Isi <strong>Nama Lengkap</strong> dan <strong>Nomor WhatsApp</strong> aktif Anda pada kolom yang tersedia.</span>
+                        </li>
+                        <li style="display: flex; gap: 0.75rem;">
+                            <span style="background: var(--accent-soft); color: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; flex-shrink: 0;">2</span>
+                            <span><strong>Pilih Cabang</strong> lokasi Boxplay yang ingin Anda kunjungi saat ini.</span>
+                        </li>
+                        <li style="display: flex; gap: 0.75rem;">
+                            <span style="background: var(--accent-soft); color: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; flex-shrink: 0;">3</span>
+                            <span>Klik tombol <strong>"Kirim Antrian"</strong>. Anda akan otomatis mendapatkan nomor antrian digital.</span>
+                        </li>
+                        <li style="display: flex; gap: 0.75rem;">
+                            <span style="background: var(--accent-soft); color: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; flex-shrink: 0;">4</span>
+                            <span>Tunjukkan nomor tersebut kepada petugas di lokasi. Pantau status antrian Anda secara realtime di halaman Antrian.</span>
+                        </li>
+                    </ul>
+                </div>
+
                 <form id="booking-form">
-                    <div id="unit-selection-section" style="display: none;">
-                        <div class="form-group">
-                            <label>Unit yang Dipilih</label>
-                            <div id="selected-unit-display" class="selected-unit-card">
-                                <i class="fas fa-playstation"></i>
-                                <span id="selected-unit-label">Memuat...</span>
-                            </div>
-                        </div>
-                    </div>
                     <div class="form-group">
                         <label for="booking-name">Nama Lengkap</label>
                         <input id="booking-name" class="form-input" type="text" placeholder="Masukkan nama Anda" required>
@@ -78,13 +93,9 @@
                     <div id="branch-selection-section">
                         <div class="form-group">
                             <label for="booking-branch">Pilih Cabang</label>
-                            <select id="booking-branch" class="form-select"></select>
-                        </div>
-                    </div>
-                    <div id="unit-selection-section-alt" style="display: none;">
-                        <div class="form-group">
-                            <label for="booking-unit">Pilih Unit</label>
-                            <select id="booking-unit" class="form-select"></select>
+                            <select id="booking-branch" class="form-select" required>
+                                <option value="" disabled selected>Pilih lokasi cabang</option>
+                            </select>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Kirim Antrian</button>

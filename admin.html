@@ -1,19 +1,20 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - Boxplay X NUD</title>
+    <title>Admin Panel - Boxplay ADMIN</title>
+    <link rel="icon" type="image/jpeg" href="foto_boxplay/icon_aplikasi.jpeg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body data-page="dashboard">
+<body data-page="admin">
     <div class="header">
         <div class="container navbar">
             <a class="brand" href="beranda.html">
-                <span class="brand-icon"><i class="fas fa-bolt"></i></span>
-                <span class="brand-name">BOXPLAY Admin</span>
+                <span class="brand-icon"><img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
+                <span class="brand-name">BOXPLAY ADMIN</span>
             </a>
             <div class="navbar-center">
                 <div class="dropdown">
@@ -55,6 +56,7 @@
                         </a>
                     </div>
                 </div>
+            </div>
             <div class="nav-actions">
                 <button id="display-link" class="btn btn-secondary">TV Display</button>
                 <button id="logout-button" class="btn btn-primary">Logout</button>
@@ -75,9 +77,9 @@
                     <i class="fas fa-plus-circle"></i>
                     <span>Buat Antrian</span>
                 </a>
-                <a href="dashboard.html" class="mobile-menu-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
+                <a href="admin.html" class="mobile-menu-item">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Panel</span>
                 </a>
                 <a href="pages/display.html" class="mobile-menu-item">
                     <i class="fas fa-tv"></i>
@@ -167,8 +169,20 @@
 
         <!-- Promo Section -->
         <section id="promo-section" class="section">
-            <div class="section-title">Kelola Promo</div>
-            <div class="section-subtitle">Tambah dan kelola promo Boxplay</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                    <div class="section-title" style="margin-bottom: 0;">Kelola Promo</div>
+                    <div class="section-subtitle">Update promo terbaru kapan pun; perubahan akan tampil otomatis di hero slide beranda. Maksimal 5 promo aktif.</div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-primary" onclick="showAddPromoModal()" title="Update promo terbaru untuk hero slide beranda" style="padding: 0.7rem 1.2rem; border-radius: 12px;">
+                        <i class="fas fa-plus-circle"></i> <span class="hide-mobile">Tambah Promo Baru</span>
+                    </button>
+                    <button class="btn btn-danger" onclick="clearAllPromos()" title="Hapus semua promo" style="padding: 0.7rem 1.2rem; border-radius: 12px;">
+                        <i class="fas fa-trash-alt"></i> <span class="hide-mobile">Hapus Semua</span>
+                    </button>
+                </div>
+            </div>
             <div class="card page-card">
                 <div class="table-wrapper">
                     <table class="table">
@@ -201,19 +215,19 @@
             <form id="add-customer-form">
                 <div class="form-group">
                     <label for="customer-name">Nama Lengkap</label>
-                    <input type="text" id="customer-name" required>
+                    <input type="text" id="customer-name" class="form-input" placeholder="Nama lengkap customer" required>
                 </div>
                 <div class="form-group">
                     <label for="customer-email">Email</label>
-                    <input type="email" id="customer-email" required>
+                    <input type="email" id="customer-email" class="form-input" placeholder="alamat@email.com">
                 </div>
                 <div class="form-group">
                     <label for="customer-phone">No HP</label>
-                    <input type="tel" id="customer-phone" required>
+                    <input type="tel" id="customer-phone" class="form-input" placeholder="08xxxxxxxxxx" required>
                 </div>
                 <div class="form-group">
                     <label for="customer-address">Alamat</label>
-                    <textarea id="customer-address" rows="3"></textarea>
+                    <textarea id="customer-address" class="form-input" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('add-customer-modal')">Batal</button>
@@ -227,34 +241,42 @@
     <div id="add-promo-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Tambah Promo Baru</h3>
+                <div>
+                    <h3 id="promo-modal-title">Tambah Promo Baru</h3>
+                    <p class="modal-subtitle">Isi detail promo untuk ditampilkan di beranda.</p>
+                </div>
                 <button class="modal-close" onclick="closeModal('add-promo-modal')">&times;</button>
             </div>
-            <form id="add-promo-form">
-                <div class="form-group">
-                    <label for="promo-title">Judul Promo</label>
-                    <input type="text" id="promo-title" required>
-                </div>
-                <div class="form-group">
-                    <label for="promo-description">Deskripsi</label>
-                    <textarea id="promo-description" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="promo-discount">Diskon (%)</label>
-                    <input type="number" id="promo-discount" min="0" max="100" required>
-                </div>
-                <div class="form-group">
-                    <label for="promo-status">Status</label>
-                    <select id="promo-status" required>
-                        <option value="active">Aktif</option>
-                        <option value="inactive">Tidak Aktif</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('add-promo-modal')">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="add-promo-form">
+                    <input type="hidden" id="promo-id-edit">
+                    <div class="form-group">
+                        <label for="promo-title">Judul Promo</label>
+                        <input type="text" id="promo-title" class="form-input" placeholder="Contoh: Promo Weekend Seru" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="promo-description">Deskripsi Promo</label>
+                        <textarea id="promo-description" class="form-input" rows="3" placeholder="Jelaskan detail promonya..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="promo-discount">Diskon (%) - Opsional</label>
+                        <select id="promo-discount" class="form-select">
+                            <option value="0">Tanpa Diskon</option>
+                            <option value="5">5% OFF</option>
+                            <option value="10">10% OFF</option>
+                            <option value="15">15% OFF</option>
+                            <option value="20">20% OFF</option>
+                            <option value="25">25% OFF</option>
+                            <option value="30">30% OFF</option>
+                            <option value="50">50% OFF</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('add-promo-modal')">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Promo</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

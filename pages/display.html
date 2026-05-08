@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV Display - Boxplay X NUD</title>
+    <link rel="icon" type="image/jpeg" href="../foto_boxplay/icon_aplikasi.jpeg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
@@ -12,58 +13,51 @@
     <div class="header">
         <div class="container navbar">
             <a class="brand" href="../beranda.html">
-                <span class="brand-icon"><i class="fas fa-bolt"></i></span>
-                <span class="brand-name">BOXPLAY X NUD</span>
+                <span class="brand-icon"><img src="../foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
+                <span class="brand-name">BOXPLAYID</span>
             </a>
             <div class="nav-actions">
-                <button class="btn btn-secondary" onclick="navigateTo('../beranda.html')">Beranda</button>
+                <button class="btn btn-secondary" onclick="navigateTo('../beranda.html')"><i class="fas fa-home"></i> Beranda</button>
             </div>
-            <button class="menu-toggle" id="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
         </div>
-        <nav class="mobile-menu" id="mobile-menu">
-            <div class="mobile-menu-content">
-                <a href="../beranda.html" class="mobile-menu-item">
-                    <i class="fas fa-home"></i>
-                    <span>Beranda</span>
-                </a>
-                <a href="../booking.html" class="mobile-menu-item">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Buat Antrian</span>
-                </a>
-                <a href="../login.html" class="mobile-menu-item">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Admin</span>
-                </a>
-                <a href="../pages/display.html" class="mobile-menu-item">
-                    <i class="fas fa-tv"></i>
-                    <span>Tampilan TV</span>
-                </a>
-            </div>
-        </nav>
     </div>
 
-    <main class="container" style="padding-top:5rem; padding-bottom:4rem;">
-        <section class="card page-card" style="text-align:center; padding:4rem 2rem;">
-            <div style="display:inline-flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
-                <span class="brand-icon"><i class="fas fa-tv"></i></span>
-                <div style="text-align:left;">
-                    <div class="tag">Tampilan Antrian</div>
-                    <h1 style="font-size:2.5rem; margin-top:0.5rem;">Nomor yang sedang dipanggil</h1>
+    <main class="container" style="padding-top:2rem; padding-bottom:4rem;">
+        <div class="grid" style="grid-template-columns: 1.5fr 1fr; gap: 2rem; align-items: start;">
+            <!-- Area Panggilan Utama -->
+            <section class="card page-card calling-card" style="text-align:center; padding:4rem 2rem; min-height: 500px; display: flex; flex-direction: column; justify-content: center;">
+                <div class="tag" style="margin-bottom: 2rem;">NOMOR SEDANG DIPANGGIL</div>
+                <div id="display-current-number" style="font-size:12rem; font-weight:900; color:var(--accent); line-height: 1; letter-spacing:-0.05em; margin-bottom: 1rem;">--</div>
+                <h2 id="display-current-name" style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">Menunggu...</h2>
+                <div id="display-current-branch" class="tag" style="font-size: 1.2rem; padding: 0.5rem 1.5rem;">SEMUA CABANG</div>
+            </section>
+
+            <!-- List Antrian Waiting -->
+            <section class="card page-card">
+                <div style="padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02);">
+                    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--muted);"><i class="fas fa-list-ol"></i> DAFTAR TUNGGU</h3>
                 </div>
-            </div>
-            <div style="margin: 2.5rem auto; max-width: 700px; padding: 3rem; border-radius: 32px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);">
-                <div style="color: var(--muted); text-transform: uppercase; letter-spacing:0.2em; margin-bottom:1rem;">Sekarang dipanggil</div>
-                <div id="display-current-number" style="font-size:7rem; font-weight:900; color:var(--gold); letter-spacing:-0.04em;">--</div>
-                <div id="display-status" style="font-size:1.2rem; color:var(--text); margin-top:1rem;">Menunggu panggilan</div>
-                <p id="display-note" style="color:var(--muted); margin-top:1rem; line-height:1.75;">Tampilan ini akan update otomatis setiap kali admin memanggil nomor baru.</p>
-            </div>
-            <button class="btn btn-secondary" onclick="navigateTo('../beranda.html')">Kembali ke Beranda</button>
-        </section>
+                <div class="table-wrapper" style="border: none; border-radius: 0;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>NO</th>
+                                <th>NAMA</th>
+                                <th>CABANG</th>
+                            </tr>
+                        </thead>
+                        <tbody id="display-waiting-list">
+                            <tr>
+                                <td colspan="3" style="text-align: center; padding: 2rem; color: var(--muted);">Memuat antrian...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
     </main>
+
+    <div id="app-toast" class="toast"></div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>

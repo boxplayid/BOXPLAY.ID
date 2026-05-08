@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nomor Antrian - Boxplay X NUD</title>
+    <link rel="icon" type="image/jpeg" href="foto_boxplay/icon_aplikasi.jpeg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -12,7 +13,7 @@
     <div class="header">
         <div class="container navbar">
             <a class="brand" href="beranda.html">
-                <span class="brand-icon"><i class="fas fa-bolt"></i></span>
+                <span class="brand-icon"><img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
                 <span class="brand-name">BOXPLAYID</span>
             </a>
             <div class="nav-actions">
@@ -48,23 +49,49 @@
     </div>
 
     <main class="container">
-        <section class="section" id="waiting-content">
-            <div class="form-card card" style="text-align:center; padding:3rem 2rem;">
-                <div style="margin-bottom:1.5rem;">
-                    <span class="brand-icon"><i class="fas fa-ticket-alt"></i></span>
+        <!-- Dashboard Panggilan Realtime -->
+        <div class="grid info-grid" style="margin-top: 2rem; margin-bottom: 2rem;">
+            <div class="card info-card calling-card">
+                <h4>Nomor Sedang Dipanggil</h4>
+                <div id="active-calling-number" style="font-size: 4.5rem; font-weight: 900; color: var(--accent); line-height: 1.2;">--</div>
+                <p id="active-calling-name" style="font-weight: 700; color: var(--text);">Menunggu Panggilan...</p>
+                <div id="active-calling-branch" class="tag" style="margin-top: 0.5rem;">SEMUA CABANG</div>
+            </div>
+            <div class="card info-card">
+                <h4>Nomor Antrian Anda</h4>
+                <div id="waiting-number" style="font-size: 4.5rem; font-weight: 900; color: #ffd700; line-height: 1.2;">--</div>
+                <p id="display-name" style="font-weight: 700;">Memuat...</p>
+                <p id="display-branch" style="font-size: 0.85rem; color: var(--muted);">-</p>
+            </div>
+        </div>
+
+        <section class="section" style="padding-top: 0;">
+            <div class="card page-card">
+                <div style="padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    <div class="section-title" style="margin: 0; font-size: 1.25rem;">Daftar Antrian (Waiting List)</div>
+                    <div class="tag" style="margin: 0;">Realtime Update</div>
                 </div>
-                <h2>Booking Antrian Berhasil</h2>
-                <p class="section-subtitle">Tunjukkan nomor antrian kepada petugas ketika dipanggil.</p>
-                <div class="page-card" style="margin-top:2rem;">
-                    <div style="font-size:0.9rem; color:var(--muted); margin-bottom:0.75rem; letter-spacing:0.15em; text-transform:uppercase;">Nomor Antrian</div>
-                    <div id="waiting-number" style="font-size: 5rem; font-weight:900; color:var(--gold); margin-bottom:1rem;">00</div>
-                    <div style="display:grid; gap:0.8rem; color:var(--text); text-align:left;">
-                        <div><strong>Nama:</strong> <span id="display-name">-</span></div>
-                        <div><strong>Nomor HP:</strong> <span id="display-phone">-</span></div>
-                        <div><strong>Cabang:</strong> <span id="display-branch">-</span></div>
-                    </div>
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Pelanggan</th>
+                                <th>Cabang</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="waiting-list-table-body">
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 3rem; color: var(--muted);">Memuat daftar antrian...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <button class="btn btn-primary" style="margin-top:2rem;" onclick="navigateTo('beranda.html')">Kembali ke Beranda</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                <button class="btn btn-secondary" onclick="navigateTo('beranda.html')"><i class="fas fa-home"></i> Kembali ke Beranda</button>
             </div>
         </section>
     </main>

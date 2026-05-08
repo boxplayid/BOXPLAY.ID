@@ -21,11 +21,7 @@ const defaultUnits = [
 
 let units = JSON.parse(localStorage.getItem('pb_units')) || defaultUnits;
 let history = JSON.parse(localStorage.getItem('pb_history')) || [];
-let promos = JSON.parse(localStorage.getItem('pb_promos')) || [
-    { id: 1, tag: 'SPECIAL NUD', title: 'Main 3 Jam, Bayar 2 Jam!', desc: 'Nikmati promo khusus di NUD Cafe setiap hari Jumat.', icon: 'fab fa-playstation', color: 'promo-1' },
-    { id: 2, tag: 'NUD SNACK', title: 'Gratis Kopi Susu', desc: 'Dapatkan Kopi Susu NUD gratis untuk booking minimal 3 jam.', icon: 'fas fa-coffee', color: 'promo-2' },
-    { id: 3, tag: 'GAMER NIGHT', title: 'Diskon 10% Menu Cafe', desc: 'Tunjukkan sesi bermainmu dan dapatkan diskon untuk semua menu NUD Cafe.', icon: 'fas fa-utensils', color: 'promo-3' }
-];
+let promos = JSON.parse(localStorage.getItem('pb_promos')) || [];
 let cart = JSON.parse(localStorage.getItem('pb_cart')) || [];
 let activeOrders = JSON.parse(localStorage.getItem('pb_active_orders')) || [];
 let products = JSON.parse(localStorage.getItem('pb_products')) || [
@@ -119,82 +115,7 @@ function renderHomeMenu() {
 }
 
 // --- CART ---
-function addToCart(item, event) {
-    cart = JSON.parse(localStorage.getItem('pb_cart')) || [];
-    const existing = cart.find(c => c.id === item.id);
-    if (existing) existing.qty++;
-    else cart.push({ ...item, qty: 1 });
-    
-    saveData();
-    updateCartUI();
-    
-    if (event && event.currentTarget) {
-        const btn = event.currentTarget;
-        const original = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i>';
-        setTimeout(() => btn.innerHTML = original, 1000);
-    }
-}
-
-function updateCartUI() {
-    const badges = document.querySelectorAll('.cart-badge');
-    const container = document.getElementById('cart-items-container');
-    const totalEl = document.getElementById('cart-total-price');
-    
-    cart = JSON.parse(localStorage.getItem('pb_cart')) || [];
-    const totalQty = cart.reduce((acc, curr) => acc + curr.qty, 0);
-    
-    badges.forEach(b => {
-        b.innerText = totalQty;
-        b.style.display = totalQty > 0 ? 'inline-flex' : 'none';
-    });
-
-    if (container) {
-        if (cart.length === 0) {
-            container.innerHTML = '<p style="text-align:center; padding:2rem; color:var(--muted);">Keranjang kosong</p>';
-        } else {
-            container.innerHTML = cart.map(item => `
-                <div class="cart-item" style="padding:1rem 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div style="font-weight:700;">${item.name}</div>
-                        <div style="font-size:0.8rem; color:var(--accent);">${formatIDR(item.price)}</div>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:0.5rem;">
-                        <button onclick="updateCartQty(${item.id}, -1)" class="btn btn-secondary" style="padding:0.2rem 0.5rem;">-</button>
-                        <span>${item.qty}</span>
-                        <button onclick="updateCartQty(${item.id}, 1)" class="btn btn-secondary" style="padding:0.2rem 0.5rem;">+</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-    }
-
-    if (totalEl) {
-        const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
-        totalEl.innerText = formatIDR(total);
-    }
-}
-
-function updateCartQty(id, delta) {
-    const item = cart.find(c => c.id === id);
-    if (item) {
-        item.qty += delta;
-        if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
-        saveData();
-        updateCartUI();
-    }
-}
-
-function toggleCart() {
-    const modal = document.getElementById('cart-modal');
-    if (modal) modal.classList.toggle('hidden');
-    if (modal && !modal.classList.contains('hidden')) updateCartUI();
-}
-
-function goToCheckout() {
-    if (cart.length === 0) return alert('Keranjang kosong!');
-    window.location.href = 'checkout.html';
-}
+// Cart functions removed as per request to remove from home view
 
 function renderCheckoutSummary() {
     const list = document.getElementById('checkout-items-list');
@@ -274,32 +195,13 @@ function processCheckout() {
 }
 
 // --- UI HELPERS ---
-function saveCustomerInfo() {
-    const name = document.getElementById('customer-name').value.trim();
-    const phone = document.getElementById('customer-phone').value.trim();
-    const type = document.getElementById('customer-type').value;
-
-    if (!name || !phone) return alert('Lengkapi data Anda!');
-
-    localStorage.setItem('pb_customer_data', JSON.stringify({ name, phone, type }));
-    document.getElementById('customer-modal').classList.add('hidden');
-    
-    if (type === 'booking') window.location.href = 'booking.html';
-}
-
-function openAboutModal() {
-    document.getElementById('about-modal').classList.remove('hidden');
-}
-
-function closeAboutModal() {
-    document.getElementById('about-modal').classList.add('hidden');
-}
+// Modal functions removed as per request to remove from home view
 
 // --- INITIALIZATION ---
 function initApp() {
     const page = window.location.pathname.split("/").pop().toLowerCase();
     
-    updateCartUI();
+    // updateCartUI() removed
     
     if (page === 'beranda.html' || page === 'index.html' || page === '') {
         renderHomeProducts();

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beranda - Boxplay X NUD</title>
+    <title>Beranda - Boxplayid</title>
     <link rel="icon" type="image/jpeg" href="foto_boxplay/icon_aplikasi.jpeg">
     <meta name="theme-color" content="#090b10">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,7 +15,7 @@
         <div class="container navbar">
             <a class="brand" href="beranda.html">
                 <span class="brand-icon"><img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
-                <span class="brand-name">BOXPLAY X NUD</span>
+                <span class="brand-name">BOXPLAYID</span>
             </a>
             <nav class="navbar-center">
                 <a class="nav-link active" href="beranda.html">
@@ -84,7 +84,7 @@
             <div class="hero-grid">
                 <div class="hero-copy">
                     <p class="tag">Tempat Nongkrong Gamers Terbaik</p>
-                    <h1>Momen Lebih Asik Bersama Boxplay & NUD Cafe</h1>
+                    <h1>Momen Lebih Asik Bersama Boxplay </h1>
                 </div>
                 <div class="hero-visual">
                     <div class="hero-slider" id="hero-slider">
@@ -198,111 +198,7 @@
         </div>
     </footer>
 
-    <!-- Customer Info Modal -->
-    <div id="customer-modal" class="customer-modal hidden">
-        <div class="customer-modal-panel">
-            <div class="customer-modal-header">
-                <h3>Selamat Datang di Boxplayid</h3>
-                <p>Masukkan data Anda untuk melanjutkan</p>
-            </div>
-            <div class="customer-modal-body">
-                <div class="form-group">
-                    <label for="customer-name">Nama Lengkap</label>
-                    <input id="customer-name" class="form-input" type="text" placeholder="Masukkan nama lengkap" />
-                </div>
-                <div class="form-group">
-                    <label for="customer-phone">Nomor WhatsApp</label>
-                    <input id="customer-phone" class="form-input" type="tel" placeholder="08xx xxxx xxxx" />
-                </div>
-                <div class="form-group">
-                    <label for="customer-type">Jenis Kunjungan</label>
-                    <select id="customer-type" class="form-select">
-                        <option value="menu">Pemesanan Menu</option>
-                        <option value="booking">Booking Unit Gaming</option>
-                    </select>
-                </div>
-            </div>
-            <div class="customer-modal-footer">
-                <button class="btn btn-primary w-full" onclick="saveCustomerInfo()">Lanjutkan</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="app-toast" class="toast"></div>
-
-    <div id="cart-modal" class="cart-modal hidden">
-        <div class="cart-modal-panel">
-            <div class="cart-modal-header">
-                <div>
-                    <h3>Keranjang Pesanan</h3>
-                    <p style="color: var(--muted); font-size: 0.95rem; margin-top: 0.35rem;">Kelola item sebelum checkout.</p>
-                </div>
-                <button class="btn btn-secondary btn-icon" onclick="toggleCart()"><i class="fas fa-times"></i></button>
-            </div>
-            <div id="cart-items-container" class="cart-items-container"></div>
-            <div class="cart-modal-footer">
-                <div class="checkout-row">
-                    <span>Total</span>
-                    <strong id="cart-total-price">Rp 0</strong>
-                </div>
-                <button class="btn btn-primary w-full" onclick="goToCheckout()" type="button">Checkout Sekarang</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- About Us Modal -->
-    <div id="about-modal" class="about-modal hidden">
-        <div class="about-modal-panel">
-            <div class="about-modal-header">
-                <button class="btn btn-secondary btn-icon" onclick="closeAboutModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="about-modal-body">
-                <div class="about-content">
-                    <div class="about-logo">
-                        <img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay X NUD">
-                    </div>
-                    <h2>Boxplay X NUD</h2>
-                    <p class="about-description">
-                        Solusi manajemen rental PlayStation modern nomor satu di Indonesia. Menyediakan unit gaming berkualitas premium dengan sistem antrian canggih dan menu spesial dari NUD Cafe.
-                    </p>
-                    
-                    <div class="about-modal-section">
-                        <h4><i class="fas fa-map-marker-alt"></i> Alamat</h4>
-                        <p>Jl. Purus IV No. 5, Padang, Sumatera Barat<br>Indonesia</p>
-                    </div>
-
-                    <div class="about-modal-section">
-                        <h4><i class="fas fa-envelope"></i> Email</h4>
-                        <a href="mailto:boxplayid@gmail.com">boxplayid@gmail.com</a>
-                    </div>
-
-                    <div class="about-modal-section">
-                        <h4><i class="fas fa-phone"></i> Nomor HP</h4>
-                        <a href="tel:+628557862734">+62 855-786-2734</a>
-                    </div>
-
-                    <div class="about-modal-section">
-                        <h4><i class="fas fa-share-alt"></i> Ikuti Media Sosial Kami</h4>
-                        <div class="social-links">
-                            <a href="https://www.instagram.com/boxplay_nud" class="social-link" target="_blank" title="Instagram">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="https://www.facebook.com/boxplay_nud" class="social-link" target="_blank" title="Facebook">
-                                <i class="fab fa-facebook"></i>
-                            </a>
-                            <a href="https://www.tiktok.com/@boxplay_nud" class="social-link" target="_blank" title="TikTok">
-                                <i class="fab fa-tiktok"></i>
-                            </a>
-                            <a href="https://wa.me/628557862734" class="social-link" target="_blank" title="WhatsApp">
-                                <i class="fab fa-whatsapp"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
