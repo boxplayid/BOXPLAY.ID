@@ -35,6 +35,8 @@ const APP_CONFIG = {
     branches: DEFAULT_BRANCH_DATA.map(branch => branch.name)
 };
 
+const operatorWA = '6285262939746';
+
 const firebaseConfig = {
     apiKey: 'AIzaSyDvMKKIFUD2Ys3MtdxDRiNFdx_OKckChpE',
     authDomain: 'idboxplay-7a27f.firebaseapp.com',
@@ -1938,7 +1940,6 @@ function showWhatsAppConnectionModal(bookingData) {
     if (!modal) return;
 
     // TODO: Ganti dengan nomor WA operator dan link grup WA yang sebenarnya
-    const operatorWA = '628557862734'; // Nomor WA operator Boxplay
     const groupWA = 'https://chat.whatsapp.com/D1OE5q7Ggul5BlPGBm8ZW5'; // Link invite grup WA Boxplay
 
     const operatorLink = `https://wa.me/${operatorWA}?text=Halo%20Boxplay!%20Saya%20sudah%20daftar%20antrian%20nomor%20${bookingData.number}%20untuk%20cabang%20${encodeURIComponent(bookingData.branch)}.%20Mohon%20bantuan%20untuk%20monitoring%20antrian%20saya.`;
@@ -1969,6 +1970,88 @@ function showWhatsAppConnectionModal(bookingData) {
     modal.onclick = (e) => {
         if (e.target === modal) redirectToWaiting();
     };
+}
+
+// Branch Catalog Modal Functions
+function showBranchCatalogModal() {
+    const modal = document.getElementById('branch-catalog-modal');
+    if (!modal) return;
+
+    // Get branches and units data
+    const branches = JSON.parse(localStorage.getItem('pb_branches')) || [
+        { name: 'NUD HOUSE', address: 'Jl. Purus IV No. 5, Padang, Sumatera Barat. Lokasi utama dengan fasilitas gaming lengkap.' },
+        { name: 'PALIO SPITI', address: 'Jati Baru, Padang Timur, Kota Padang.' },
+        { name: 'PIRZZY', address: 'Jl. Baru Andalas, Kota Padang 17c.' },
+        { name: 'WAROENG RADEN', address: 'Jl. Jaksa Agung R. Soeprapto No. 7, Rimbo Kaluang, Kec. Padang Barat, Kota Padang, Sumatera Barat.' }
+    ];
+
+    const units = JSON.parse(localStorage.getItem('pb_units')) || [];
+
+    // Create branch tabs
+    const tabsContainer = document.getElementById('branch-tabs');
+    tabsContainer.innerHTML = branches.map((branch, index) => `
+        <button class="branch-tab ${index === 0 ? 'active' : ''}" onclick="showBranchCatalog('${branch.name}')">
+            ${branch.name}
+        </button>
+    `).join('');
+
+    // Show first branch catalog by default
+    showBranchCatalog(branches[0].name);
+
+    // Show modal
+    modal.classList.add('show');
+}
+
+function showBranchCatalog(branchName) {
+    // Update active tab
+    document.querySelectorAll('.branch-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.textContent.trim() === branchName) {
+            tab.classList.add('active');
+        }
+    });
+
+    // Get units for this branch
+    const units = JSON.parse(localStorage.getItem('pb_units')) || [];
+    const branchUnits = units.filter(unit => unit.branch === branchName);
+
+    const contentContainer = document.getElementById('branch-catalog-content');
+
+    if (branchUnits.length === 0) {
+        contentContainer.innerHTML = `
+            <div class="branch-catalog-empty">
+                <i class="fas fa-store-slash"></i>
+                <h3>Tidak ada unit tersedia</h3>
+                <p>Saat ini belum ada unit PlayStation yang terdaftar untuk cabang ${branchName}.</p>
+            </div>
+        `;
+        return;
+    }
+
+    contentContainer.innerHTML = `
+        <div class="branch-catalog-grid">
+            ${branchUnits.map(unit => `
+                <div class="product-card">
+                    <div class="product-img">
+                        <img src="${unit.image || 'foto_boxplay/unitps.jpg'}" alt="${unit.name}">
+                        <span class="product-status ${unit.status === 'active' ? 'status-used' : 'status-ready'}">
+                            ${unit.status === 'active' ? 'Digunakan' : 'Ready'}
+                        </span>
+                        <i class="fab fa-playstation"></i>
+                    </div>
+                    <div class="product-info">
+                        <p class="product-cat">${unit.type} - ${unit.branch}</p>
+                        <h4 class="product-title">${unit.name}</h4>
+                        <div class="product-price">Rp 15.000 <span>/ Jam</span></div>
+                        <button class="btn btn-primary w-full"
+                            onclick="${unit.status === 'active' ? '' : `navigateToBooking('${unit.name} (${unit.branch})')`}" ${unit.status === 'active' ? 'disabled' : ''}>
+                            ${unit.status === 'active' ? 'SEDANG BERMAIN' : 'BOOKING UNIT'}
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
 document.addEventListener('DOMContentLoaded', initPage);

@@ -1998,6 +1998,61 @@ footer {
     gap: 0.5rem;
 }
 
+/* Branch Catalog Modal */
+.branch-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.branch-tab {
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.branch-tab:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.branch-tab.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.branch-catalog-content {
+    min-height: 400px;
+}
+
+.branch-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.branch-catalog-empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+}
+
+.branch-catalog-empty i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+
 .wa-notification-section {
     max-width: 600px;
     margin: 0 auto 2rem;

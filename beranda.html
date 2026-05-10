@@ -181,6 +181,11 @@
         <section class="section">
             <div class="section-title">Katalog Unit Tersedia</div>
             <p class="section-subtitle">Unit PlayStation 4 terawat dengan kualitas premium untuk pengalaman bermain terbaik.</p>
+            <div class="section-actions" style="margin-bottom: 2rem; text-align: center;">
+                <button class="btn btn-secondary" onclick="showBranchCatalogModal()" style="margin-right: 1rem;">
+                    <i class="fas fa-store"></i> List Cabang
+                </button>
+            </div>
             <div id="home-product-grid" class="grid product-grid"></div>
         </section>
     </main>
@@ -215,7 +220,25 @@
         </div>
     </footer>
 
-    
+    <div id="app-toast" class="toast"></div>
+
+    <!-- Branch Catalog Modal -->
+    <div id="branch-catalog-modal" class="modal">
+        <div class="modal-content" style="max-width: 1200px;">
+            <div class="modal-header">
+                <h2>Katalog Unit Per Cabang</h2>
+                <button class="modal-close" onclick="closeModal('branch-catalog-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="branch-tabs" id="branch-tabs">
+                    <!-- Branch tabs will be populated by JavaScript -->
+                </div>
+                <div class="branch-catalog-content" id="branch-catalog-content">
+                    <!-- Branch catalog will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
