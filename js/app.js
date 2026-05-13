@@ -220,7 +220,8 @@ function initPage() {
     if (pageType === 'display') initDisplayPage();
     if (pageType === 'branch') initCabangPage();
     if (pageType === 'portfolio') initPortfolioPage();
-    if (pageType === 'about') initAboutPage(); // Tambahkan ini
+    if (pageType === 'about') initAboutPage();
+    if (pageType === 'game') initGamePage();
     
     // Compatibility with script.js initialization
     if (typeof initApp === 'function') initApp();
@@ -264,30 +265,55 @@ function initCabangPage() {
     });
 }
 
+function normalizeBranchData(rawData) {
+    if (Array.isArray(rawData)) return rawData;
+    if (rawData && typeof rawData === 'object') return Object.values(rawData);
+    return [];
+}
+
+function getBranchImagePath(branch) {
+    if (!branch) return '';
+    if (typeof branch === 'string') return branch;
+    return branch.image || branch.imageUrl || branch.foto || branch.photo || (branch.image && branch.image.src) || '';
+}
+
 function renderBranchHeroSlider() {
     const slider = document.getElementById('branch-hero-slider');
     const dotsContainer = document.getElementById('branch-slider-dots');
     
     if (!slider || !dotsContainer) return;
     
-    const branches = JSON.parse(localStorage.getItem('pb_branches')) || [
+    let rawBranches;
+    try {
+        rawBranches = JSON.parse(localStorage.getItem('pb_branches'));
+    } catch (error) {
+        console.warn('pb_branches tidak bisa di-parse:', error);
+        rawBranches = null;
+    }
+
+    const normalizedBranches = normalizeBranchData(rawBranches);
+    const branches = normalizedBranches.length ? normalizedBranches : [
         { name: 'NUD HOUSE', image: 'foto_cabang/nud.jpeg', address: 'Nikmati suasana gaming premium dengan kopi terbaik.' },
         { name: 'PALIO SPITI', image: 'foto_cabang/palio_spiti.jpeg', address: 'Lokasi strategis untuk mabar seru bersama teman.' },
         { name: 'PIRZZY', image: 'foto_cabang/pirzy.jpeg', address: 'Fasilitas gaming lengkap dengan menu kekinian.' },
         { name: 'WAROENG RADEN', image: 'foto_cabang/waroeng_raden.jpeg', address: 'Tempat nongkrong asik dengan sentuhan tradisional.' }
     ];
-    
+
     console.log('Branches data:', branches);
     
     // Render slides
-    slider.innerHTML = branches.map((branch, idx) => `
-        <div class="hero-slide ${idx === 0 ? 'active' : ''}" data-image="${branch.image}">
+    slider.innerHTML = branches.map((branch, idx) => {
+        const imagePath = getBranchImagePath(branch);
+        const bgStyle = imagePath ? `background-image: url('${imagePath}');` : '';
+        return `
+        <div class="hero-slide ${idx === 0 ? 'active' : ''}" data-image="${imagePath}" style="${bgStyle}">
             <div class="slide-overlay">
                 <h2>${branch.name}</h2>
-                <p>${branch.address}</p>
+                <p>${branch.address || ''}</p>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
     
     // Render dots
     dotsContainer.innerHTML = branches.map((_, idx) => `
@@ -327,6 +353,7 @@ function renderBranchUnitsSections(branches) {
 }
 
 let branchSlideIndex = 0;
+let branchSliderInterval;
 
 function setBranchSlide(index) {
     const slider = document.getElementById('branch-hero-slider');
@@ -335,7 +362,7 @@ function setBranchSlide(index) {
     const dots = document.querySelectorAll('#branch-slider-dots .slider-dot');
     if (!slides.length || !dots.length) return;
 
-    branchSlideIndex = index % slides.length;
+    branchSlideIndex = ((index % slides.length) + slides.length) % slides.length;
 
     slides.forEach((slide, idx) => {
         slide.classList.toggle('active', idx === branchSlideIndex);
@@ -359,57 +386,46 @@ function initBranchHeroSlider() {
 
     setBranchSlide(0);
     dots.forEach((dot, idx) => dot.addEventListener('click', () => setBranchSlide(idx)));
-    setInterval(() => setBranchSlide((branchSlideIndex + 1) % slides.length), 6000);
+
+    const prevBtn = slider.querySelector('.hero-prev');
+    const nextBtn = slider.querySelector('.hero-next');
+    if (prevBtn) prevBtn.addEventListener('click', () => setBranchSlide(branchSlideIndex - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => setBranchSlide(branchSlideIndex + 1));
+
+    if (branchSliderInterval) clearInterval(branchSliderInterval);
+    branchSliderInterval = setInterval(() => setBranchSlide((branchSlideIndex + 1) % slides.length), 6000);
 }
 
 function initPortfolioPage() {
-    console.log("Inisialisasi Halaman Portofolio...");
-    const slider = document.getElementById('portfolio-page-slider');
-    const dots = document.querySelectorAll('#portfolio-page-dots .slider-dot');
-    
-    if (!slider) {
-        console.error("Slider portofolio tidak ditemukan!");
-        return;
-    }
+    initPortfolioSlider();
+}
 
+let teamSlideIndex = 0;
+
+function setTeamSlide(index) {
+    const slider = document.getElementById('team-slider');
+    if (!slider) return;
     const slides = slider.querySelectorAll('.hero-slide');
-    console.log(`Ditemukan ${slides.length} slide portofolio`);
-    
-    // Load images
+    const dots = document.querySelectorAll('#team-slider-dots .slider-dot');
+    if (!slides.length || !dots.length) return;
+
+    teamSlideIndex = ((index % slides.length) + slides.length) % slides.length;
+
     slides.forEach((slide, idx) => {
-        const imagePath = slide.dataset.image;
-        if (imagePath) {
-            console.log(`Memuat gambar slide ${idx}: ${imagePath}`);
-            loadHeroImage(slide, imagePath);
-        }
+        slide.classList.toggle('active', idx === teamSlideIndex);
     });
 
-    let currentIndex = 0;
-
-    function setSlide(index) {
-        currentIndex = index % slides.length;
-        slides.forEach((slide, idx) => slide.classList.toggle('active', idx === currentIndex));
-        dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentIndex));
-    }
-
-    if (dots.length > 0) {
-        dots.forEach((dot, idx) => {
-            dot.addEventListener('click', () => {
-                console.log(`Dot portofolio ${idx} diklik`);
-                setSlide(idx);
-            });
-        });
-    }
-
-    // Set initial slide
-    setSlide(0);
-
-    setInterval(() => setSlide(currentIndex + 1), 6000);
+    dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === teamSlideIndex);
+    });
 }
 
 function initAboutPage() {
     const slider = document.getElementById('team-slider');
     const dots = document.querySelectorAll('#team-slider-dots .slider-dot');
+    const prevBtn = slider?.querySelector('.hero-prev');
+    const nextBtn = slider?.querySelector('.hero-next');
+    
     if (!slider || !dots.length) return;
 
     const slides = slider.querySelectorAll('.hero-slide');
@@ -420,22 +436,113 @@ function initAboutPage() {
         if (imagePath) loadHeroImage(slide, imagePath);
     });
 
-    let currentIndex = 0;
-
-    function setSlide(index) {
-        currentIndex = index % slides.length;
-        slides.forEach((slide, idx) => slide.classList.toggle('active', idx === currentIndex));
-        dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentIndex));
-    }
+    setTeamSlide(0);
 
     dots.forEach((dot, idx) => {
-        dot.addEventListener('click', () => setSlide(idx));
+        dot.addEventListener('click', () => setTeamSlide(idx));
     });
 
-    // Set initial slide
-    setSlide(0);
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => setTeamSlide(teamSlideIndex - 1));
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => setTeamSlide(teamSlideIndex + 1));
+    }
 
-    setInterval(() => setSlide(currentIndex + 1), 6000);
+    setInterval(() => setTeamSlide((teamSlideIndex + 1) % slides.length), 6000);
+}
+
+const DEFAULT_GAMES = [
+    { name: 'A Way Out', category: 'Aksi & Petualangan', image: 'foto_game/A-WAY-OUT.jpeg', rating: 4.9, description: 'Co-op intens yang menuntut kerja sama dan strategi.' },
+    { name: 'eFootball Mourinho Edition 2026', category: 'Olahraga', image: 'foto_game/E-FOOTBALL.jpeg', rating: 4.7, description: 'Sepak bola taktis dengan gaya Mourinho.' },
+    { name: 'FC26', category: 'Olahraga', image: 'foto_game/FC26.jpeg', rating: 4.8, description: 'Aksi lapangan hijau modern dengan grafis tajam.' },
+    { name: 'It Takes Two', category: 'Aksi & Petualangan', image: 'foto_game/IT-TAKES-TWO.jpeg', rating: 4.9, description: 'Petualangan co-op kreatif penuh emosi dan aksi.' },
+    { name: 'MotoGP 24', category: 'Olahraga', image: 'foto_game/MOTO-GP.jpeg', rating: 4.8, description: 'Balapan motor cepat dengan sensasi sirkuit nyata.' },
+    { name: 'Naruto Storm Connections', category: 'Aksi & Petualangan', image: 'foto_game/NARUTO-CONNEC.jpeg', rating: 4.7, description: 'Pertarungan ninja epik dengan combo spektakuler.' },
+    { name: 'Spider-Man 2', category: 'Aksi & Petualangan', image: 'foto_game/SPIDER-MAN.jpeg', rating: 4.8, description: 'Aksi pahlawan super dengan dunia terbuka dinamis.' }
+];
+
+let activeGameCardIndex = 0;
+
+function renderGamesGrid() {
+    const container = document.getElementById('games-grid');
+    if (!container) return;
+    
+    let games = JSON.parse(localStorage.getItem('pb_games')) || [];
+    if (!games.length) games = DEFAULT_GAMES;
+    
+    container.innerHTML = games.map(game => `
+        <div class="product-card">
+            <div class="product-img">
+                <img src="${game.image}" alt="${game.name}">
+                <span class="product-status status-ready">${game.category}</span>
+                <i class="fab fa-playstation"></i>
+            </div>
+            <div class="product-info">
+                <p class="product-cat">PlayStation 4 Game</p>
+                <h4 class="product-title">${game.name}</h4>
+                <p style="color: var(--muted); font-size: 0.95rem; margin: 0.75rem 0 1rem;">${game.description || 'Game seru untuk semua pemain.'}</p>
+                <div class="product-price">
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <i class="fas fa-star" style="color: #ffd700;"></i>
+                        <span>${game.rating || 0} / 5</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary w-full" onclick="navigateTo('booking.html')">PESAN UNIT</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderHeroCards() {
+    const stack = document.getElementById('heroCardsStack');
+    if (!stack) return;
+
+    const games = JSON.parse(localStorage.getItem('pb_games')) || DEFAULT_GAMES;
+    stack.innerHTML = games.map((game, idx) => `
+        <div class="hero-card ${idx === 0 ? 'active' : ''}" style="background-image: url('${game.image}')" onclick="selectGameCard(${idx})">
+            <div class="hero-card-content">
+                <div class="hero-card-category">${game.category}</div>
+                <div class="hero-card-title">${game.name}</div>
+                <div class="hero-card-rating"><i class="fas fa-star"></i> ${game.rating || 0}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function selectGameCard(index) {
+    const games = JSON.parse(localStorage.getItem('pb_games')) || DEFAULT_GAMES;
+    if (!games.length) return;
+
+    activeGameCardIndex = ((index % games.length) + games.length) % games.length;
+    const selectedGame = games[activeGameCardIndex];
+
+    document.getElementById('heroTitle').textContent = selectedGame.name;
+    document.getElementById('heroDescription').textContent = selectedGame.description || 'Nikmati pengalaman gaming terbaik dengan grafis memukau dan gameplay seru.';
+    document.getElementById('heroBgImage').style.backgroundImage = `url('${selectedGame.image}')`;
+
+    const cards = document.querySelectorAll('.hero-card');
+    cards.forEach((card, idx) => {
+        const isActive = idx === activeGameCardIndex;
+        card.classList.toggle('active', isActive);
+        if (isActive) {
+            card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+    });
+}
+
+function previousGameCard() {
+    selectGameCard(activeGameCardIndex - 1);
+}
+
+function nextGameCard() {
+    selectGameCard(activeGameCardIndex + 1);
+}
+
+function initGamePage() {
+    renderHeroCards();
+    selectGameCard(0);
+    renderGamesGrid();
 }
 
 function renderBranchUnits(units, branchName, containerId) {
@@ -483,13 +590,13 @@ function initHomePage() {
 let portfolioSlideIndex = 0;
 
 function setPortfolioSlide(index) {
-    const slider = document.getElementById('portfolio-slider');
+    const slider = document.getElementById('portfolio-page-slider');
     if (!slider) return;
     const slides = slider.querySelectorAll('.hero-slide');
-    const dots = document.querySelectorAll('#portfolio-dots .slider-dot');
+    const dots = document.querySelectorAll('#portfolio-page-dots .slider-dot');
     if (!slides.length || !dots.length) return;
 
-    portfolioSlideIndex = index % slides.length;
+    portfolioSlideIndex = ((index % slides.length) + slides.length) % slides.length;
 
     slides.forEach((slide, idx) => {
         slide.classList.toggle('active', idx === portfolioSlideIndex);
@@ -501,10 +608,12 @@ function setPortfolioSlide(index) {
 }
 
 function initPortfolioSlider() {
-    const slider = document.getElementById('portfolio-slider');
+    const slider = document.getElementById('portfolio-page-slider');
     if (!slider) return;
     const slides = slider.querySelectorAll('.hero-slide');
-    const dots = document.querySelectorAll('#portfolio-dots .slider-dot');
+    const dots = document.querySelectorAll('#portfolio-page-dots .slider-dot');
+    const prevBtn = slider.querySelector('.hero-prev');
+    const nextBtn = slider.querySelector('.hero-next');
 
     if (!slides.length || !dots.length) return;
 
@@ -520,6 +629,13 @@ function initPortfolioSlider() {
     dots.forEach((dot, idx) => {
         dot.addEventListener('click', () => setPortfolioSlide(idx));
     });
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => setPortfolioSlide(portfolioSlideIndex - 1));
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => setPortfolioSlide(portfolioSlideIndex + 1));
+    }
 
     setInterval(() => {
         setPortfolioSlide((portfolioSlideIndex + 1) % slides.length);
@@ -1854,78 +1970,7 @@ function editUnit(unitId) {
 }
 
 // === INITIALIZATION ===
-function initDashboardPage() {
-    // Load initial data
-    ensureDefaultBranchData();
-    renderBranchesGrid();
-    renderUnitsTable();
-    
-    // Setup form handlers
-    const branchForm = document.getElementById('add-branch-form');
-    if (branchForm) {
-        branchForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            handleAddBranch();
-        });
-        branchForm.addEventListener('reset', () => clearImagePreview('branch-image-preview'));
-    }
-    
-    const unitForm = document.getElementById('add-unit-form');
-    if (unitForm) {
-        unitForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            handleAddUnit();
-        });
-        unitForm.addEventListener('reset', () => clearImagePreview('unit-image-preview'));
-    }
 
-    const editBranchForm = document.getElementById('edit-branch-form');
-    if (editBranchForm) {
-        editBranchForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            handleEditBranch();
-        });
-        editBranchForm.addEventListener('reset', () => clearImagePreview('edit-branch-image-preview'));
-    }
-
-    updateBranchOptions();
-
-    const branchImageInput = document.getElementById('branch-image');
-    if (branchImageInput) branchImageInput.addEventListener('change', () => updateImagePreview('branch-image', 'branch-image-preview'));
-
-    const unitImageInput = document.getElementById('unit-image');
-    if (unitImageInput) unitImageInput.addEventListener('change', () => updateImagePreview('unit-image', 'unit-image-preview'));
-
-    const editBranchImageInput = document.getElementById('edit-branch-image');
-    if (editBranchImageInput) editBranchImageInput.addEventListener('change', () => updateImagePreview('edit-branch-image', 'edit-branch-image-preview'));
-    
-    // Load existing data from Firebase if available
-    if (typeof db !== 'undefined') {
-        db.ref('boxplay/branches').on('value', (snapshot) => {
-            const branches = snapshot.val();
-            if (branches && Array.isArray(branches)) {
-                APP_CONFIG.branches = branches;
-                updateBranchOptions();
-            }
-        });
-        
-        db.ref('boxplay/branchData').on('value', (snapshot) => {
-            const branchData = snapshot.val();
-            if (branchData) {
-                localStorage.setItem('pb_branches', JSON.stringify(branchData));
-                renderBranchesGrid();
-            }
-        });
-        
-        db.ref('boxplay/units').on('value', (snapshot) => {
-            const units = snapshot.val();
-            if (units) {
-                localStorage.setItem('pb_units', JSON.stringify(units));
-                renderUnitsTable();
-            }
-        });
-    }
-}
 window.clearAllPromos = clearAllPromos;
 window.closeModal = closeModal;
 window.scrollToSection = scrollToSection;

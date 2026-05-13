@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game - Boxplayid</title>
+    <link rel="icon" type="image/jpeg" href="foto_boxplay/icon_aplikasi.jpeg">
+    <meta name="theme-color" content="#090b10">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="game">
+    <div class="header">
+        <div class="container navbar">
+            <a class="brand" href="beranda.html">
+                <span class="brand-icon"><img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
+                <span class="brand-name">BOXPLAYID</span>
+            </a>
+            <nav class="navbar-center">
+                <a class="nav-link" href="beranda.html">
+                    <i class="fas fa-home"></i> <span>Home</span>
+                </a>
+                <a class="nav-link" href="waiting.html">
+                    <i class="fas fa-list"></i> <span>Antrian</span>
+                </a>
+                <a class="nav-link" href="cabang.html">
+                    <i class="fas fa-store"></i> <span>Cabang</span>
+                </a>
+                <a class="nav-link active" href="game.html">
+                    <i class="fas fa-gamepad"></i> <span>Game</span>
+                </a>
+                <a class="nav-link" href="portofolio.html">
+                    <i class="fas fa-images"></i> <span>Portofolio</span>
+                </a>
+                <a class="nav-link" href="tentang.html">
+                    <i class="fas fa-info-circle"></i> <span>Tentang Kami</span>
+                </a>
+            </nav>
+            <div class="navbar-end">
+                <button class="btn btn-secondary btn-icon admin-login" onclick="navigateTo('login.html')" title="Login Admin">
+                    <i class="fas fa-user-shield"></i>
+                </button>
+            </div>
+            <button class="menu-toggle" id="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav class="mobile-menu" id="mobile-menu">
+            <div class="mobile-menu-content">
+                <a href="beranda.html" class="mobile-menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Beranda</span>
+                </a>
+                <a href="waiting.html" class="mobile-menu-item">
+                    <i class="fas fa-list"></i>
+                    <span>Daftar Antrian</span>
+                </a>
+                <a href="cabang.html" class="mobile-menu-item">
+                    <i class="fas fa-store"></i>
+                    <span>Cabang</span>
+                </a>
+                <a href="game.html" class="mobile-menu-item">
+                    <i class="fas fa-gamepad"></i>
+                    <span>Game</span>
+                </a>
+                <a href="portofolio.html" class="mobile-menu-item">
+                    <i class="fas fa-images"></i>
+                    <span>Portofolio</span>
+                </a>
+                <a href="tentang.html" class="mobile-menu-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Tentang Kami</span>
+                </a>
+                <a href="login.html" class="mobile-menu-item">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <main>
+        <!-- Premium Hero Slider Section -->
+        <section class="premium-hero-slider">
+            <div class="hero-slider-container">
+                <!-- Background Image -->
+                <div class="hero-background">
+                    <div class="hero-bg-image" id="heroBgImage"></div>
+                    <div class="hero-overlay"></div>
+                </div>
+
+                <!-- Right Side: Stacked Cards -->
+                <div class="hero-cards-stack" id="heroCardsStack">
+                    <!-- Cards akan di-populate oleh JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Hero Text and Actions Section -->
+        <section class="hero-text-section">
+            <div class="hero-content-left">
+                <div class="hero-text">
+                    <span class="hero-badge">GAMING EXPERIENCE</span>
+                    <h1 id="heroTitle">Spider-Man 2</h1>
+                    <p id="heroDescription">Pengalaman gaming super hero yang tak terlupakan dengan grafis memukau.</p>
+                </div>
+
+                <div class="hero-bottom-actions">
+                    <button class="hero-cta-btn" onclick="navigateTo('booking.html')">
+                        <span>PESAN SEKARANG</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <div class="slider-controls">
+                        <button class="slider-btn prev-btn" onclick="previousGameCard()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="slider-btn next-btn" onclick="nextGameCard()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container" style="margin-top: 4rem;">
+            <!-- Games Grid -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Daftar Game PlayStation 4</div>
+                        <div class="section-subtitle">Koleksi game terlengkap yang tersedia di semua unit Boxplay untuk kenyamanan bermain Anda.</div>
+                    </div>
+                </div>
+                <div class="grid product-grid" id="games-grid">
+                    <!-- Games akan ditampilkan di sini -->
+                </div>
+            </section>
+
+            <!-- Game Categories -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Kategori Game Populer</div>
+                        <div class="section-subtitle">Pilih berdasarkan genre favorit Anda</div>
+                    </div>
+                </div>
+                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-shoe-prints"></i></div>
+                        <h4>Olahraga</h4>
+                        <p>FIFA, NBA 2K, F1, dan game olahraga terpopuler.</p>
+                    </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-crosshairs"></i></div>
+                    <h4>Aksi & Petualangan</h4>
+                    <p>God of War, Spider-Man, Uncharted, dan lainnya.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-chess"></i></div>
+                    <h4>Strategi & Puzzle</h4>
+                    <p>Final Fantasy, Civilization, dan game strategi lainnya.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
+                    <h4>Multiplayer & Online</h4>
+                    <p>Call of Duty, Fortnite, Apex Legends, dan lainnya.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-row">
+                <div class="footer-card">
+                    <h4>Boxplay X Cabang</h4>
+                    <p>Solusi manajemen rental PlayStation dan cafe gaming terpadu di Padang.</p>
+                </div>
+                <div class="footer-card">
+                    <h4>Navigasi</h4>
+                    <ul>
+                        <li><a href="beranda.html">Beranda</a></li>
+                        <li><a href="cabang.html">Cabang</a></li>
+                        <li><a href="game.html">Game</a></li>
+                        <li><a href="tentang.html">Tentang Kami</a></li>
+                    </ul>
+                </div>
+                <div class="footer-card">
+                    <h4>Kontak</h4>
+                    <ul>
+                        <li><a href="https://wa.me/6285262939746" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+                        <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+                <div class="footer-card">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Pusat Bantuan</a></li>
+                        <li><a href="#">Kebijakan Privasi</a></li>
+                        <li><a href="#">Kontak Kami</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Boxplay Billing System.</p>
+        </div>
+    </footer>
+
+    <div id="app-toast" class="toast"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
