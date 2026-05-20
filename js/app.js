@@ -632,12 +632,21 @@ const DEFAULT_GAMES = [
 
 let activeGameCardIndex = 0;
 
+function getSavedGames() {
+    try {
+        const raw = localStorage.getItem('pb_games');
+        const parsed = raw ? JSON.parse(raw) : null;
+        return Array.isArray(parsed) && parsed.length ? parsed : DEFAULT_GAMES;
+    } catch (err) {
+        return DEFAULT_GAMES;
+    }
+}
+
 function renderGamesGrid() {
     const container = document.getElementById('games-grid');
     if (!container) return;
     
-    let games = JSON.parse(localStorage.getItem('pb_games')) || [];
-    if (!games.length) games = DEFAULT_GAMES;
+    const games = getSavedGames();
     
     container.innerHTML = games.map(game => `
         <div class="product-card">
@@ -666,7 +675,7 @@ function renderHeroCards() {
     const stack = document.getElementById('heroCardsStack');
     if (!stack) return;
 
-    const games = JSON.parse(localStorage.getItem('pb_games')) || DEFAULT_GAMES;
+    const games = getSavedGames();
     stack.innerHTML = games.map((game, idx) => `
         <div class="hero-card ${idx === 0 ? 'active' : ''}" style="background-image: url('${game.image}')" onclick="selectGameCard(${idx})">
             <div class="hero-card-content">
@@ -679,7 +688,7 @@ function renderHeroCards() {
 }
 
 function selectGameCard(index) {
-    const games = JSON.parse(localStorage.getItem('pb_games')) || DEFAULT_GAMES;
+    const games = getSavedGames();
     if (!games.length) return;
 
     activeGameCardIndex = ((index % games.length) + games.length) % games.length;

@@ -10,106 +10,25 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="admin">
-    <div class="header">
-        <div class="container navbar">
-            <a class="brand" href="admin.html">
-                <span class="brand-icon"><img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
-                <span class="brand-name">BOXPLAY.ID ADMIN</span>
-            </a>
-            <div class="navbar-center">
-                <div class="dropdown">
-                    <button class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
-                        <i class="fas fa-clock"></i> <span>Antrian Waiting</span>
-                    </button>
-                    <div class="dropdown-menu">
-                        <a href="#queue-section" class="dropdown-item" onclick="scrollToSection('queue-section')">
-                            <i class="fas fa-list"></i> Lihat Antrian
-                        </a>
-                        <a href="booking.html" class="dropdown-item">
-                            <i class="fas fa-plus"></i> Tambah Antrian
-                        </a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <button class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
-                        <i class="fas fa-users"></i> <span>Data Customer</span>
-                    </button>
-                    <div class="dropdown-menu">
-                        <a href="#customer-section" class="dropdown-item" onclick="scrollToSection('customer-section'); return false;">
-                            <i class="fas fa-eye"></i> Lihat Data Customer
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showAddCustomerModal(); return false;">
-                            <i class="fas fa-user-plus"></i> Tambah Customer
-                        </a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <button class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
-                        <i class="fas fa-building"></i> <span>Unit & Cabang</span>
-                    </button>
-                    <div class="dropdown-menu">
-                        <a href="#units-section" class="dropdown-item" onclick="scrollToSection('units-section'); return false;">
-                            <i class="fas fa-eye"></i> Lihat Unit & Cabang
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showAddBranchModal(); return false;">
-                            <i class="fas fa-plus"></i> Tambah Cabang Baru
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showAddUnitModal(); return false;">
-                            <i class="fas fa-plus-circle"></i> Tambah Unit Baru
-                        </a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <button class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
-                        <i class="fas fa-gamepad"></i> <span>Data Game</span>
-                    </button>
-                    <div class="dropdown-menu">
-                        <a href="#games-section" class="dropdown-item" onclick="scrollToSection('games-section'); return false;">
-                            <i class="fas fa-eye"></i> Lihat Game
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showAddGameModal(); return false;">
-                            <i class="fas fa-plus-circle"></i> Tambah Game
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="nav-actions">
-                <button id="display-link" class="btn btn-secondary">TV Display</button>
-                <button id="logout-button" class="btn btn-primary">Logout</button>
-            </div>
-            <button class="menu-toggle" id="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
+    <main class="container">
+        <div class="admin-top-nav">
+            <button class="btn btn-secondary" onclick="scrollToSection('queue-section')">
+                <i class="fas fa-list"></i> Antrian
+            </button>
+            <button class="btn btn-secondary" onclick="scrollToSection('customer-section')">
+                <i class="fas fa-users"></i> Customer
+            </button>
+            <button class="btn btn-secondary" onclick="scrollToSection('promo-section')">
+                <i class="fas fa-tags"></i> Promo
+            </button>
+            <button class="btn btn-secondary" onclick="scrollToSection('units-section')">
+                <i class="fas fa-building"></i> Unit & Cabang
+            </button>
+            <button class="btn btn-danger logout-icon" onclick="logout()" title="Logout Admin">
+                <i class="fas fa-sign-out-alt"></i>
             </button>
         </div>
-        <nav class="mobile-menu" id="mobile-menu">
-            <div class="mobile-menu-content">
-                <a href="beranda.html" class="mobile-menu-item">
-                    <i class="fas fa-home"></i>
-                    <span>Beranda</span>
-                </a>
-                <a href="booking.html" class="mobile-menu-item">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Buat Antrian</span>
-                </a>
-                <a href="admin.html" class="mobile-menu-item">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Admin Panel</span>
-                </a>
-                <a href="pages/display.html" class="mobile-menu-item">
-                    <i class="fas fa-tv"></i>
-                    <span>Tampilan TV</span>
-                </a>
-                <a href="#" onclick="logout()" class="mobile-menu-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </div>
-        </nav>
-    </div>
 
-    <main class="container">
         <section id="queue-section" class="section">
             <div class="dashboard-header">
                 <div>
@@ -558,3 +477,5 @@
     <script src="js/app.js?v=2"></script>
 </body>
 </html>
+
+

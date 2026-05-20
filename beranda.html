@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -11,21 +11,14 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="home">
-    <div class="header">
-        <div class="container navbar">
-            <div class="page-label">Beranda</div>
-            <a class="brand" href="beranda.html">
-                <span class="brand-icon"><img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
-                <span class="brand-name">BOXPLAY.ID</span>
-            </a>
-            <div class="navbar-end">
-                <button class="btn btn-secondary btn-icon admin-login" onclick="navigateTo('login.html')" title="Login Admin">
-                    <i class="fas fa-user-shield"></i>
-                </button>
-            </div>
-        </div>
+    <div class="hero-actions">
+        <button class="icon-btn admin-login" onclick="navigateTo('login.html')" title="Login Admin" aria-label="Login Admin">
+            <i class="fas fa-user-shield"></i>
+        </button>
+        <button id="theme-toggle" class="theme-toggle" title="Mode Gelap/Terang" aria-label="Toggle theme">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+        </button>
     </div>
-
     <main class="container">
         <section class="hero">
             <div class="hero-grid">
@@ -228,3 +221,7 @@
     <script src="js/script.js"></script>
 </body>
 </html>
+
+
+
+
