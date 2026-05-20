@@ -225,6 +225,174 @@ function initPage() {
     
     // Compatibility with script.js initialization
     if (typeof initApp === 'function') initApp();
+    initAnimations();
+}
+
+function createLoaderOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'loader-overlay';
+    overlay.innerHTML = '<div class="loader-spinner"></div>';
+    document.body.prepend(overlay);
+    document.body.classList.add('loading');
+
+    window.addEventListener('load', () => {
+        overlay.classList.add('hidden');
+        document.body.classList.remove('loading');
+        setTimeout(() => overlay.remove(), 600);
+    });
+}
+
+function initNavbarScroll() {
+    const header = document.querySelector('.header');
+    if (!header) return;
+    const updateHeader = () => {
+        header.classList.toggle('header-scrolled', window.scrollY > 30);
+    };
+    updateHeader();
+    window.addEventListener('scroll', updateHeader, { passive: true });
+}
+
+function initSmoothAnchors() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', e => {
+            const targetId = anchor.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+}
+
+function initScrollReveal() {
+    const selectors = [
+        '.scroll-reveal',
+        'section',
+        '.section-title',
+        '.product-card',
+        '.feature-card',
+        '.about-card',
+        '.card',
+        '.hero-copy',
+        '.hero-slide',
+        '.footer-card',
+        '.product-info',
+        '.product-img',
+        '.page-label',
+        '.brand',
+        '.nav-link',
+        '.hero-actions',
+        '.hero-slider',
+        '.product-status'
+    ];
+
+    const elements = Array.from(new Set(document.querySelectorAll(selectors.join(', '))));
+    elements.forEach((el, idx) => {
+        if (!el.classList.contains('scroll-reveal')) {
+            el.classList.add('scroll-reveal');
+        }
+        el.style.transitionDelay = `${Math.min(0.18 + idx * 0.02, 0.6)}s`;
+    });
+
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                obs.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.16, rootMargin: '0px 0px -80px 0px' });
+
+    elements.forEach(el => observer.observe(el));
+}
+
+function initAnimations() {
+    createLoaderOverlay();
+    initNavbarScroll();
+    initSmoothAnchors();
+    initScrollReveal();
+    applyStoredTheme();
+    createThemeToggleButton();
+}
+
+// Theme helpers: persist user theme choice and inject toggle into navbar
+function setTheme(theme) {
+    if (theme === 'light') {
+        document.documentElement.classList.add('theme-light');
+    } else {
+        document.documentElement.classList.remove('theme-light');
+    }
+    try { localStorage.setItem('pb_theme', theme); } catch(e){}
+    updateThemeIcon(theme);
+    // update aria-pressed for toggle button
+    const btn = document.getElementById('theme-toggle');
+    if (btn) btn.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+    // update mobile menu icon if present
+    const mobileItem = document.getElementById('mobile-theme-toggle');
+    if (mobileItem) {
+        const mi = mobileItem.querySelector('i');
+        if (mi) mi.className = (theme === 'light') ? 'fas fa-sun' : 'fas fa-moon';
+    }
+}
+
+function applyStoredTheme() {
+    const stored = localStorage.getItem('pb_theme') || 'dark';
+    setTheme(stored);
+}
+
+function toggleTheme() {
+    const isLight = document.documentElement.classList.contains('theme-light');
+    setTheme(isLight ? 'dark' : 'light');
+}
+
+function updateThemeIcon(theme) {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    const icon = btn.querySelector('i');
+    if (!icon) return;
+    if (theme === 'light') {
+        icon.className = 'fas fa-sun';
+    } else {
+        icon.className = 'fas fa-moon';
+    }
+}
+
+function createThemeToggleButton() {
+    if (document.getElementById('theme-toggle')) return;
+    const navbarEnd = document.querySelector('.navbar-end');
+    if (!navbarEnd) return;
+    const btn = document.createElement('button');
+    btn.id = 'theme-toggle';
+    btn.className = 'theme-toggle';
+    btn.title = 'Toggle theme';
+    btn.setAttribute('aria-label', 'Toggle theme');
+    btn.setAttribute('aria-pressed', (document.documentElement.classList.contains('theme-light') ? 'true' : 'false'));
+    btn.tabIndex = 0;
+    btn.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i>';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
+    btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTheme(); }
+    });
+    // Insert before admin-login if present otherwise append
+    const admin = navbarEnd.querySelector('.admin-login');
+    if (admin) navbarEnd.insertBefore(btn, admin);
+    else navbarEnd.appendChild(btn);
+    // set initial icon
+    updateThemeIcon(localStorage.getItem('pb_theme') || 'dark');
+
+    // Add mobile menu item for theme toggle if mobile menu exists
+    const mobileMenuContent = document.querySelector('.mobile-menu .mobile-menu-content');
+    if (mobileMenuContent && !document.getElementById('mobile-theme-toggle')) {
+        const item = document.createElement('a');
+        item.href = '#';
+        item.id = 'mobile-theme-toggle';
+        item.className = 'mobile-menu-item mobile-theme-item';
+        item.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i><span>Mode</span>';
+        item.addEventListener('click', (ev) => { ev.preventDefault(); ev.stopPropagation(); toggleTheme(); });
+        item.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggleTheme(); } });
+        mobileMenuContent.insertBefore(item, mobileMenuContent.firstChild);
+    }
 }
 
 function initCabangPage() {
@@ -874,6 +1042,20 @@ function initDashboardPage() {
         });
     }
 
+    const gameForm = document.getElementById('add-game-form');
+    if (gameForm) {
+        gameForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleAddGame();
+        });
+    }
+
+    const gameImageInput = document.getElementById('game-image');
+    if (gameImageInput) gameImageInput.addEventListener('change', () => updateImagePreview('game-image', 'game-image-preview'));
+
+    renderGamesTable();
+    listenGameUpdates();
+
     updateBranchOptions();
 
     // === SETUP IMAGE PREVIEW HANDLERS ===
@@ -1326,6 +1508,7 @@ async function processBooking() {
 
         await refs.items.child(bookingId).set(bookingData);
         sessionStorage.setItem('latestBooking', JSON.stringify(bookingData));
+        await saveBookingCustomer(name, phone, branch);
 
         showToast(`Nomor antrian berhasil dibuat: ${String(queueNumber).padStart(2, '0')}`);
         setTimeout(() => {
@@ -1335,6 +1518,36 @@ async function processBooking() {
     } catch (error) {
         console.error(error);
         showToast('Terjadi kesalahan saat membuat antrian. Coba lagi.', 'danger');
+    }
+}
+
+async function saveBookingCustomer(name, phone, branch) {
+    try {
+        const snapshot = await db.ref('boxplay/customers').once('value');
+        let customers = snapshot.val() || [];
+        if (!Array.isArray(customers)) customers = Object.values(customers);
+
+        const normalizedPhone = phone.replace(/\D/g, '');
+        const existingCustomer = customers.find(c => c.phone === normalizedPhone);
+        if (existingCustomer) {
+            existingCustomer.name = name;
+            existingCustomer.branch = branch;
+            existingCustomer.updatedAt = Date.now();
+        } else {
+            customers.push({
+                id: `cust-${Date.now()}`,
+                name,
+                email: '',
+                phone: normalizedPhone,
+                address: '',
+                branch,
+                createdAt: Date.now()
+            });
+        }
+
+        await db.ref('boxplay/customers').set(customers);
+    } catch (error) {
+        console.error('Gagal menyimpan data customer booking:', error);
     }
 }
 
@@ -1578,6 +1791,184 @@ window.showAddCustomerModal = () => showModal('add-customer-modal');
 window.showAddPromoModal = window.showAddPromoModal; // Pastikan menggunakan fungsi yang sudah di-update
 window.openEditPromoModal = openEditPromoModal; // Ekspos fungsi edit ke global
 window.deletePromo = deletePromo;
+
+// === GAME MANAGEMENT ===
+window.showAddGameModal = () => {
+    const form = document.getElementById('add-game-form');
+    const modalTitle = document.getElementById('game-modal-title');
+    if (form) form.reset();
+    if (modalTitle) modalTitle.textContent = 'Tambah Game Baru';
+    const editField = document.getElementById('game-id-edit');
+    if (editField) editField.value = '';
+    clearImagePreview('game-image-preview');
+    showModal('add-game-modal');
+};
+
+window.openEditGameModal = (gameId) => {
+    const games = JSON.parse(localStorage.getItem('pb_games')) || [];
+    const game = games.find(item => item.id === gameId) || DEFAULT_GAMES.find(item => item.id === gameId);
+    if (!game) {
+        showToast('Game tidak ditemukan.', 'danger');
+        return;
+    }
+    const modalTitle = document.getElementById('game-modal-title');
+    const editField = document.getElementById('game-id-edit');
+    if (modalTitle) modalTitle.textContent = 'Edit Game';
+    if (editField) editField.value = game.id || '';
+    document.getElementById('game-name').value = game.name || '';
+    document.getElementById('game-category').value = game.category || '';
+    document.getElementById('game-rating').value = game.rating || '';
+    document.getElementById('game-description').value = game.description || '';
+    const imageInput = document.getElementById('game-image');
+    if (imageInput) imageInput.value = '';
+    const preview = document.getElementById('game-image-preview');
+    if (preview) {
+        preview.src = game.image || '';
+        preview.hidden = !game.image;
+    }
+    showModal('add-game-modal');
+};
+
+window.deleteGame = async (gameId) => {
+    if (!confirm('Apakah Anda yakin ingin menghapus game ini?')) return;
+    try {
+        let games = JSON.parse(localStorage.getItem('pb_games')) || [];
+        games = games.filter(game => game.id !== gameId);
+        localStorage.setItem('pb_games', JSON.stringify(games));
+        if (typeof db !== 'undefined') {
+            await db.ref('boxplay/games').set(games);
+        }
+        renderGamesTable();
+        renderHeroCards();
+        renderGamesGrid();
+        showToast('Game berhasil dihapus.');
+    } catch (error) {
+        console.error(error);
+        showToast('Gagal menghapus game.', 'danger');
+    }
+};
+
+function renderGamesTable() {
+    const body = document.getElementById('games-table-body');
+    if (!body) return;
+    let games = JSON.parse(localStorage.getItem('pb_games')) || [];
+    if (!games.length) games = DEFAULT_GAMES;
+    if (!games.length) {
+        body.innerHTML = '<tr><td colspan="6" style="padding:2rem; text-align:center; color:var(--muted);">Belum ada game.</td></tr>';
+        return;
+    }
+    body.innerHTML = games.map((game, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td><strong>${game.name}</strong></td>
+            <td>${game.category}</td>
+            <td>${game.rating || 0}</td>
+            <td><img src="${game.image}" alt="${game.name}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 8px;" onerror="this.src='foto_game/placeholder.jpeg'"></td>
+            <td>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="btn btn-secondary" type="button" onclick="window.openEditGameModal('${game.id}')" style="padding:0.5rem; color: var(--accent);">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-secondary" type="button" onclick="deleteGame('${game.id}')" style="padding:0.5rem; color: var(--danger);">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function getStoredGames() {
+    const games = JSON.parse(localStorage.getItem('pb_games')) || [];
+    return games.length ? games : DEFAULT_GAMES.map((game, idx) => ({ ...game, id: game.id || `game-${idx + 1}` }));
+}
+
+function listenGameUpdates() {
+    if (typeof db === 'undefined') return;
+    db.ref('boxplay/games').on('value', (snapshot) => {
+        const games = snapshot.val() || [];
+        if (Array.isArray(games)) {
+            localStorage.setItem('pb_games', JSON.stringify(games));
+            renderGamesTable();
+            renderHeroCards();
+            renderGamesGrid();
+        }
+    });
+}
+
+async function handleAddGame() {
+    const gameId = document.getElementById('game-id-edit').value;
+    const name = document.getElementById('game-name').value.trim();
+    const category = document.getElementById('game-category').value.trim();
+    const rating = parseFloat(document.getElementById('game-rating').value) || 0;
+    const imageInput = document.getElementById('game-image');
+    const description = document.getElementById('game-description').value.trim();
+
+    if (!name || !category || !description) {
+        showToast('Harap isi semua field game.', 'danger');
+        return;
+    }
+
+    let games = JSON.parse(localStorage.getItem('pb_games')) || [];
+    if (!games.length) games = DEFAULT_GAMES.map((game, idx) => ({ ...game, id: game.id || `game-${idx + 1}` }));
+
+    let image = null;
+    if (imageInput && imageInput.files && imageInput.files[0]) {
+        try {
+            image = await readImageFileAsDataUrl(imageInput);
+        } catch (error) {
+            console.error(error);
+            showToast('Gagal membaca file gambar.', 'danger');
+            return;
+        }
+    }
+
+    if (gameId) {
+        const index = games.findIndex(game => game.id === gameId);
+        if (index !== -1) {
+            games[index] = {
+                ...games[index],
+                name,
+                category,
+                rating,
+                image: image || games[index].image,
+                description,
+                updatedAt: Date.now()
+            };
+        }
+    } else {
+        if (!image) {
+            showToast('Harap unggah gambar game dalam format JPEG.', 'danger');
+            return;
+        }
+        const id = `game-${Date.now()}`;
+        games.push({ id, name, category, rating, image, description, createdAt: Date.now() });
+    }
+
+    localStorage.setItem('pb_games', JSON.stringify(games));
+
+    if (typeof db !== 'undefined') {
+        await db.ref('boxplay/games').set(games);
+    }
+
+    renderGamesTable();
+    renderHeroCards();
+    renderGamesGrid();
+
+    closeModal('add-game-modal');
+    showToast(gameId ? 'Game berhasil diupdate!' : 'Game berhasil ditambahkan!');
+}
+
+function addOrUpdateGameInStorage(game) {
+    let games = JSON.parse(localStorage.getItem('pb_games')) || [];
+    const index = games.findIndex(item => item.id === game.id);
+    if (index !== -1) {
+        games[index] = game;
+    } else {
+        games.push(game);
+    }
+    localStorage.setItem('pb_games', JSON.stringify(games));
+}
 
 // === UNIT & CABANG MANAGEMENT ===
 

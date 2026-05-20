@@ -12,7 +12,7 @@
 <body data-page="admin">
     <div class="header">
         <div class="container navbar">
-            <a class="brand" href="beranda.html">
+            <a class="brand" href="admin.html">
                 <span class="brand-icon"><img src="foto_boxplay/icon_aplikasi.jpeg" alt="Logo Boxplay" /></span>
                 <span class="brand-name">BOXPLAY.ID ADMIN</span>
             </a>
@@ -56,6 +56,19 @@
                         </a>
                         <a href="#" class="dropdown-item" onclick="showAddUnitModal(); return false;">
                             <i class="fas fa-plus-circle"></i> Tambah Unit Baru
+                        </a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
+                        <i class="fas fa-gamepad"></i> <span>Data Game</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="#games-section" class="dropdown-item" onclick="scrollToSection('games-section'); return false;">
+                            <i class="fas fa-eye"></i> Lihat Game
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="showAddGameModal(); return false;">
+                            <i class="fas fa-plus-circle"></i> Tambah Game
                         </a>
                     </div>
                 </div>
@@ -264,6 +277,41 @@
                 </div>
             </div>
         </section>
+
+        <!-- Game Management Section -->
+        <section id="games-section" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                    <div class="section-title" style="font-size: 1.2rem; margin-bottom: 0;">Daftar Game</div>
+                    <div class="section-subtitle" style="margin-top: 0.5rem;">Kelola game yang ditampilkan di halaman Game dan hero card.</div>
+                    <p style="margin: 0.65rem 0 0; color: var(--muted); font-size: 0.95rem; max-width: 560px; line-height: 1.5;">
+                        Tekan tombol Tambah Game untuk membuat atau mengedit game. Semua data game akan tersimpan di admin panel dan otomatis muncul di halaman <strong>game.html</strong>.
+                    </p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddGameModal()" style="padding: 0.7rem 1rem; border-radius: 12px;">
+                    <i class="fas fa-plus-circle"></i> Tambah Game
+                </button>
+            </div>
+            <div class="card page-card">
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Game</th>
+                                <th>Kategori</th>
+                                <th>Rating</th>
+                                <th>Gambar</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="games-table-body">
+                            <!-- Game data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Modal untuk Tambah Customer -->
@@ -414,6 +462,50 @@
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="closeModal('add-unit-modal')">Batal</button>
                         <button type="submit" class="btn btn-primary">Tambah Unit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Tambah / Edit Game -->
+    <div id="add-game-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h3 id="game-modal-title">Tambah Game Baru</h3>
+                    <p class="modal-subtitle">Isi detail game untuk ditampilkan di halaman Game dan hero card.</p>
+                </div>
+                <button class="modal-close" onclick="closeModal('add-game-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-game-form">
+                    <input type="hidden" id="game-id-edit">
+                    <div class="form-group">
+                        <label for="game-name">Nama Game</label>
+                        <input type="text" id="game-name" class="form-input" placeholder="Contoh: A Way Out" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="game-category">Kategori</label>
+                        <input type="text" id="game-category" class="form-input" placeholder="Contoh: Aksi & Petualangan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="game-rating">Rating</label>
+                        <input type="number" id="game-rating" class="form-input" min="0" max="5" step="0.1" placeholder="Contoh: 4.8" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="game-image">Upload Gambar Game (JPEG)</label>
+                        <input type="file" id="game-image" class="form-input" accept=".jpg, .jpeg, image/jpeg">
+                        <small style="color: var(--muted); font-size: 0.85rem;">Pilih file .jpeg/.jpg. Saat edit, biarkan kosong untuk mempertahankan gambar saat ini.</small>
+                        <img id="game-image-preview" class="image-preview" alt="Preview gambar game" hidden style="margin-top:0.75rem; max-width: 100%; border-radius: 14px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="game-description">Deskripsi</label>
+                        <textarea id="game-description" class="form-input" rows="3" placeholder="Ringkas fitur atau gameplay game ini." required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('add-game-modal')">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Game</button>
                     </div>
                 </form>
             </div>
