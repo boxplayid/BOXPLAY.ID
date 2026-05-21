@@ -90,6 +90,14 @@ function getQueueRefs() {
     };
 }
 
+function getWaitingListRefs() {
+    const root = db.ref('waiting_list');
+    return {
+        root,
+        items: root
+    };
+}
+
 function validatePhone(phone) {
     const digits = phone.replace(/\D/g, '');
     return /^08\d{8,10}$/.test(digits);

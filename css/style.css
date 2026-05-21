@@ -1204,11 +1204,13 @@ input, select, textarea {
     }
 
     .promo-slider {
-        height: 320px;
+        min-height: 420px;
+        height: auto;
+        padding: 1rem 0 2rem;
     }
 
     .promo-content h2 {
-        font-size: 1.8rem;
+        font-size: 2rem;
     }
 
     .footer-row {
@@ -1646,14 +1648,23 @@ input, select, textarea {
     transition: opacity 0.8s ease;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Diubah dari center ke space-between */
-    padding: 2rem 3rem;
+    justify-content: space-between;
+    padding: 2.5rem 3rem;
+    gap: 2rem;
     overflow: hidden;
 }
 
 .promo-slide.active {
     opacity: 1;
     z-index: 1;
+}
+
+.promo-slider {
+    position: relative;
+    width: 100%;
+    min-height: 420px;
+    overflow: hidden;
+    margin: 0 auto;
 }
 
 .promo-slide::before {
@@ -1703,25 +1714,28 @@ input, select, textarea {
 }
 
 .promo-content {
-    max-width: 420px;
-}
+        text-align: left;
+        flex: 1 1 55%;
+        max-width: 560px;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
 
-.promo-content h2 {
-    font-size: 2rem;
-    line-height: 1.05;
-    font-weight: 800;
-    margin-bottom: 0.9rem;
-    animation: slideUp 0.6s ease-out 0.1s forwards;
-    opacity: 0;
-}
+    .promo-content h2 {
+        font-size: clamp(2.1rem, 3vw, 2.5rem);
+        line-height: 1.05;
+        font-weight: 800;
+        margin-bottom: 0.9rem;
+        animation: slideUp 0.6s ease-out 0.1s forwards;
+        opacity: 0;
+    }
 
-.promo-content p {
-    font-size: 1rem;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 1.4rem;
-    max-width: 420px;
-    animation: slideUp 0.6s ease-out 0.2s forwards;
+    .promo-content p {
+        font-size: 1rem;
+        line-height: 1.75;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 1.4rem;
+        max-width: 100%;
     opacity: 0;
 }
 
@@ -1778,9 +1792,9 @@ input, select, textarea {
 
 .promo-visuals {
     position: relative;
-    width: 300px;
-    height: 100%;
-    z-index: 1;
+        flex: 0 0 320px;
+        min-width: 260px;
+        width: 320px;
 }
 
 .visual-element {
@@ -1918,29 +1932,33 @@ input, select, textarea {
 
 @media (max-width: 768px) {
     .promo-slider {
-        height: 240px;
+        min-height: 360px;
         margin: 1rem auto;
     }
     
     .promo-slide {
         flex-direction: column;
+        justify-content: center;
         text-align: center;
         padding: 1.5rem;
+        gap: 1.2rem;
     }
     
     .promo-content {
         text-align: center;
         max-width: none;
         margin-bottom: 1rem;
+        width: 100%;
     }
     
     .promo-visuals {
         width: 100%;
-        height: 80px;
+        height: 120px;
+        min-width: auto;
     }
     
     .visual-element {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
     }
     
     .ball-1, .coffee-1, .star-1 {
@@ -1948,11 +1966,11 @@ input, select, textarea {
     }
     
     .promo-content h2 {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
     }
     
     .promo-content p {
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
 }
 
